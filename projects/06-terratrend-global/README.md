@@ -1,4 +1,4 @@
-# TerraTrend Global — Phase 1
+# TerraTrend Global — Phase 1–2 foundation
 
 TerraTrend Global is a small, transparent MVP for exploring how a global environmental-change
 dashboard can organize indicators, display regional context, and calculate repeatable summaries.
@@ -25,6 +25,8 @@ flowchart LR
   V --> S[Statistics module]
   V --> D[Streamlit dashboard]
   S --> D
+  C[NASA CMR metadata] --> P[Provenance adapter]
+  P -. no observations .-> D
 ```
 
 ## Run locally
@@ -46,7 +48,7 @@ cd projects/06-terratrend-global
 python -m pytest
 ```
 
-## NASA access investigation (minimal)
+## NASA access workflow investigation
 
 On 2026-11-13, a request to the official NASA Common Metadata Repository (CMR) catalog endpoint
 returned one matching collection for `short_name=MOD13Q1`:
@@ -61,13 +63,44 @@ verify Earthdata Login authorization, protected data-download access, API rate l
 selection, or a working production ingestion pipeline. No NASA credentials were requested,
 stored, or used, and this MVP does not fetch live NASA data.
 
+### Phase 2 verification: MOD11A2 for New York City
+
+The preferred candidate is Terra MODIS `MOD11A2` version `061`, an 8-day land-surface-temperature
+product. On 2026-11-13, the public CMR UMM-JSON granule query below returned four matches; its
+first result was `MOD11A2.A2024001.h12v04.061.2024011195232`
+(`G2834222407-LPCLOUD`, provider `LPCLOUD`) for a New York City bounding box and January 2024:
+
+```text
+https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=MOD11A2&version=061&bounding_box=-74.10,40.60,-73.70,40.90&temporal=2024-01-01T00:00:00Z,2024-02-01T00:00:00Z&page_size=1
+```
+
+CMR identifies the HDF download as an `lp-prod-protected` URL. An unauthenticated request to the
+official Earthdata profile endpoint redirected to sign-in. No `EARTHDATA_TOKEN` (or other
+Earthdata credential configuration) was available, so **no protected data request was made**.
+
+`terratrend.nasa` implements a public-metadata adapter that:
+
+1. builds an explicit city/time/product CMR query;
+2. validates the returned product/version and captures the catalog concept ID, provider, temporal
+   coverage, declared data URL, and exact query URL in `GranuleProvenance`;
+3. refuses protected download when `EARTHDATA_TOKEN` is absent; and
+4. refuses to decode HDF data or return observations in all cases.
+
+The module records candidate MOD11A2 scaling, QA, and 8-day compositing expectations only as
+requirements for a future ingestion implementation. They were **not** verified against an
+authorized downloaded granule, no QC filtering or temporal aggregation was performed, and no real
+observation has been saved or displayed.
+
 ## Known limitations
 
 - The map uses one representative coordinate per synthetic region, not gridded geospatial data.
 - Two fixture months support UI prototyping only; they do not establish trends.
 - Values are simple anomalies with no uncertainty, quality flags, temporal aggregation, or
   scientific baseline provenance.
-- No live API connector, authentication flow, caching, or database is included in Phase 1.
+- The Phase 2 metadata adapter does not download HDF files, decode MODIS QA flags, aggregate
+  pixels, or create real observations.
+- The map is still exclusively driven by synthetic fixtures; it intentionally ignores NASA catalog
+  metadata.
 
 ## Next steps
 
