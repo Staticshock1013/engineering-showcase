@@ -82,6 +82,38 @@ eight-day weight, and it rejects incomplete or non-contiguous calendar coverage.
 reusable function rather than a claimed annual result: each cached result contains one eight-day
 composite only.
 
+## Safe batch ingestion
+
+`terratrend.ingestion` plans MOD11A2 product-aligned eight-day periods before making any network
+request. Its default mode is a dry run: it writes a resumable `manifest.json` to `.terratrend-cache`
+but does not query CMR, use `EARTHDATA_TOKEN`, or download HDF files.
+
+```bash
+# No-network annual plan: 46 expected 2024 periods, all marked planned_no_network.
+python -m terratrend.ingestion --city london --years 2024
+
+# No-network fixed-season plan: this is always period/season-level, never annual.
+python -m terratrend.ingestion --city london --years 2024 \
+  --mode fixed-season --season 06-25:07-02 --cache-dir .terratrend-cache/london-june
+```
+
+Apply mode is deliberately explicit and bounded. It requires `--apply` and refuses before network
+access if pending periods exceed `--max-downloads`; it resumes existing processed outputs, waits
+between requests, atomically retains raw HDF files in the runtime cache, and writes credential-free
+per-period provenance. For a reviewed one-period retrieval:
+
+```bash
+python -m terratrend.ingestion --city london --years 2024 \
+  --mode fixed-season --season 06-25:07-02 --apply --max-downloads 1 \
+  --rate-limit-seconds 2 --cache-dir .terratrend-cache/london-june
+```
+
+Do not invoke an annual apply plan until its planned period count, expected storage, Earthdata
+authorization, and scientific need have been reviewed. A cache can calculate an annual mean only
+with complete contiguous calendar coverage. Fixed-season outputs and incomplete annual coverage
+are explicitly ineligible for annual or multiyear trend claims; `require_multiyear_trend_claim`
+also requires at least three complete annual results.
+
 ## Known limitations
 
 - The map uses one representative coordinate per synthetic region, not gridded geospatial data.
