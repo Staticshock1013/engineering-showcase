@@ -1,0 +1,201 @@
+{
+  "accepted_year_count": 15,
+  "city": {
+    "bounding_box": [
+      -74.1,
+      40.6,
+      -73.7,
+      40.9
+    ],
+    "name": "New York City"
+  },
+  "composite_day_of_year": 177,
+  "minimum_valid_pixel_fraction": 0.1,
+  "period_cache_directory": "periods",
+  "period_definition": "One 16-day MOD13A2 composite beginning on DOY 177 each year.",
+  "periods": [
+    {
+      "granule_ur": "MOD13A2.A2010177.h12v04.061.2021168163324",
+      "mean_ndvi": 0.4423,
+      "period_end": "2010-07-11T23:59:59.000Z",
+      "period_start": "2010-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 984,
+      "valid_pixel_fraction": 0.752869,
+      "year": 2010
+    },
+    {
+      "granule_ur": "MOD13A2.A2011177.h12v04.061.2021193160254",
+      "mean_ndvi": 0.4853,
+      "period_end": "2011-07-11T23:59:59.000Z",
+      "period_start": "2011-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 586,
+      "valid_pixel_fraction": 0.448355,
+      "year": 2011
+    },
+    {
+      "granule_ur": "MOD13A2.A2012177.h12v04.061.2021211193421",
+      "mean_ndvi": 0.4586,
+      "period_end": "2012-07-10T23:59:59.000Z",
+      "period_start": "2012-06-25T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 868,
+      "valid_pixel_fraction": 0.664116,
+      "year": 2012
+    },
+    {
+      "granule_ur": "MOD13A2.A2013177.h12v04.061.2021233101339",
+      "mean_ndvi": 0.5097,
+      "period_end": "2013-07-11T23:59:59.000Z",
+      "period_start": "2013-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 437,
+      "valid_pixel_fraction": 0.334353,
+      "year": 2013
+    },
+    {
+      "granule_ur": "MOD13A2.A2014177.h12v04.061.2021258034746",
+      "mean_ndvi": 0.4944,
+      "period_end": "2014-07-11T23:59:59.000Z",
+      "period_start": "2014-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 617,
+      "valid_pixel_fraction": 0.472073,
+      "year": 2014
+    },
+    {
+      "granule_ur": "MOD13A2.A2015177.h12v04.061.2021327193702",
+      "mean_ndvi": 0.5612,
+      "period_end": "2015-07-11T23:59:59.000Z",
+      "period_start": "2015-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 380,
+      "valid_pixel_fraction": 0.290742,
+      "year": 2015
+    },
+    {
+      "granule_ur": "MOD13A2.A2016177.h12v04.061.2021353091735",
+      "mean_ndvi": 0.4795,
+      "period_end": "2016-07-10T23:59:59.000Z",
+      "period_start": "2016-06-25T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 585,
+      "valid_pixel_fraction": 0.44759,
+      "year": 2016
+    },
+    {
+      "granule_ur": "MOD13A2.A2017177.h12v04.061.2021277061008",
+      "mean_ndvi": 0.507,
+      "period_end": "2017-07-11T23:59:59.000Z",
+      "period_start": "2017-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 578,
+      "valid_pixel_fraction": 0.442234,
+      "year": 2017
+    },
+    {
+      "granule_ur": "MOD13A2.A2018177.h12v04.061.2021339232132",
+      "mean_ndvi": 0.4557,
+      "period_end": "2018-07-11T23:59:59.000Z",
+      "period_start": "2018-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 862,
+      "valid_pixel_fraction": 0.659526,
+      "year": 2018
+    },
+    {
+      "granule_ur": "MOD13A2.A2019177.h12v04.061.2020303062037",
+      "mean_ndvi": 0.5204,
+      "period_end": "2019-07-11T23:59:59.000Z",
+      "period_start": "2019-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 542,
+      "valid_pixel_fraction": 0.41469,
+      "year": 2019
+    },
+    {
+      "granule_ur": "MOD13A2.A2020177.h12v04.061.2020340095733",
+      "mean_ndvi": 0.4912,
+      "period_end": "2020-07-10T23:59:59.000Z",
+      "period_start": "2020-06-25T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 545,
+      "valid_pixel_fraction": 0.416985,
+      "year": 2020
+    },
+    {
+      "granule_ur": "MOD13A2.A2021177.h12v04.061.2021194014427",
+      "mean_ndvi": 0.4874,
+      "period_end": "2021-07-11T23:59:59.000Z",
+      "period_start": "2021-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 613,
+      "valid_pixel_fraction": 0.469013,
+      "year": 2021
+    },
+    {
+      "granule_ur": "MOD13A2.A2022177.h12v04.061.2022195115843",
+      "mean_ndvi": 0.4899,
+      "period_end": "2022-07-11T23:59:59.000Z",
+      "period_start": "2022-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 676,
+      "valid_pixel_fraction": 0.517215,
+      "year": 2022
+    },
+    {
+      "granule_ur": "MOD13A2.A2023177.h12v04.061.2023201065550",
+      "mean_ndvi": 0.4646,
+      "period_end": "2023-07-11T23:59:59.000Z",
+      "period_start": "2023-06-26T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 517,
+      "valid_pixel_fraction": 0.395562,
+      "year": 2023
+    },
+    {
+      "granule_ur": "MOD13A2.A2024177.h12v04.061.2024195022551",
+      "mean_ndvi": 0.4771,
+      "period_end": "2024-07-10T23:59:59.000Z",
+      "period_start": "2024-06-25T00:00:00.000Z",
+      "selected_pixel_count": 1307,
+      "status": "accepted_fixed_season_period",
+      "valid_pixel_count": 685,
+      "valid_pixel_fraction": 0.524101,
+      "year": 2024
+    }
+  ],
+  "product": {
+    "short_name": "MOD13A2",
+    "version": "061"
+  },
+  "schema_version": 1,
+  "series_status": "verified_fixed_season_ndvi_not_annual",
+  "trend": {
+    "assumptions": "One MOD13A2 DOY-177 16-day composite per year; consistent product, QC, city bounding box, and valid-pixel threshold. Not annual NDVI.",
+    "confidence_level": 0.95,
+    "count": 15,
+    "intercept": -0.028209,
+    "p_value": 0.890085,
+    "r_squared": 0.001525,
+    "slope_ci_lower": -0.003669,
+    "slope_ci_upper": 0.004181,
+    "slope_per_year": 0.000256,
+    "status": "verified_fixed_season_ndvi_trend"
+  }
+}

@@ -35,3 +35,8 @@ New York City also has one authenticated `MOD13A2` v061 NDVI cache:
 `MOD13A2.A2024177.h12v04.061.2024195022551`, covering 2024-06-25 to 2024-07-10. Its provenance is
 stored in `terratrend/processed/mod13a2_nyc_2024-06-25.json`. NDVI semantics and QA come from the
 [MOD13 User Guide v6.1](https://lpdaac.usgs.gov/documents/621/MOD13_User_Guide_V61.pdf).
+
+The bounded historical fixed-season cache is in `terratrend/series/nyc-mod13a2-doy177/`. Its
+manifest records 15 authenticated DOY-177 periods from 2010–2024, their granules, valid-pixel
+fractions, threshold decisions, and fixed-season trend statistics. Each referenced period JSON
+contains the source URL and CMR provenance; credentials are not stored.

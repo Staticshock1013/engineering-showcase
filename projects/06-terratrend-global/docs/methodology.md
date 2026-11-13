@@ -29,3 +29,14 @@ schema. The product guide publishes a 0.0001 scale; the validated HDF file recor
 divisor 10000, so raw NDVI is divided by 10000. A pixel must have detailed VI-quality bits 0–1
 equal to `00` and pixel reliability `0`. The implementation rejects city bboxes not fully covered
 by the retrieved MODIS tile, preventing a partial tile from being labeled as a city sample.
+
+## NYC fixed-season series
+
+The historical series uses one MOD13A2 composite beginning on day-of-year 177 each year, which is
+June 25 in leap years and June 26 otherwise. Every period uses the same NYC bounding box, product
+version, scale/divisor validation, QA rule, spatial method, and a minimum 10% QC-passing pixel
+fraction. The series is rate-limited, resumable, and each period retains its own provenance cache.
+
+The reusable `statistics.linear_trend` function applies OLS and reports a two-sided 95% slope
+interval and p-value only when at least three periods pass the threshold. These are conditional
+fixed-season statistics—not annual aggregation or causal inference.

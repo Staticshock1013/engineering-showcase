@@ -9,6 +9,10 @@
   representativeness analysis is included.
 - NDVI is an optical vegetation index, not a direct biomass, carbon, or vegetation-health
   measurement. The one verified city period cannot support those claims.
+- The NYC 2010–2024 NDVI output samples one 16-day DOY-177 composite each year, not annual
+  coverage. Its OLS slope, confidence interval, and p-value are descriptive fixed-season
+  statistics contingent on the selected period, QC threshold, and city bounding box; they do not
+  establish an annual trend, causation, or attribution.
 - Runtime batch caches require a bounded explicit apply action and are not automatically exposed
   in the dashboard.
 - An annual result requires complete contiguous annual coverage; a trend requires at least three

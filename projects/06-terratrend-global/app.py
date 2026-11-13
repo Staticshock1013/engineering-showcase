@@ -1,5 +1,8 @@
 """Streamlit entry point for the TerraTrend Global Phase 1 MVP."""
 
+import json
+from pathlib import Path
+
 import plotly.express as px
 import streamlit as st
 
@@ -11,7 +14,10 @@ from terratrend.presentation import (
     verified_cache_csv,
 )
 from terratrend.registry import INDICATOR_REGISTRY, VERIFIED_DATA_REGISTRY
+from terratrend.ndvi_series import load_fixed_season_series
 from terratrend.statistics import indicator_summary, regional_means
+
+NDVI_SERIES_DIRECTORY = Path(__file__).parent / "terratrend" / "series" / "nyc-mod13a2-doy177"
 
 st.set_page_config(page_title="TerraTrend Global", page_icon="🌍", layout="wide")
 st.title("TerraTrend Global")
@@ -104,6 +110,36 @@ else:
         "No verified processed cache is available. Only the clearly labeled synthetic global "
         "prototype is shown."
     )
+
+try:
+    ndvi_series = load_fixed_season_series(NDVI_SERIES_DIRECTORY)
+except (OSError, ValueError, json.JSONDecodeError):
+    ndvi_series = None
+    st.error("Fixed-season NDVI series cache could not be loaded and is not displayed.")
+
+if ndvi_series:
+    trend = ndvi_series["trend"]
+    st.subheader("NYC fixed-season NDVI series (DOY 177)")
+    st.caption(
+        "One validated MOD13A2 16-day composite near late June/early July per year (2010–2024). "
+        "This is a fixed-season series, not annual NDVI."
+    )
+    if trend["status"] == "verified_fixed_season_ndvi_trend":
+        st.info(
+            "Trend is descriptive OLS over fixed-season composites only. It does not establish "
+            "annual vegetation change, causation, or a general vegetation-health trend."
+        )
+        trend_columns = st.columns(4)
+        trend_columns[0].metric("Slope (NDVI/year)", trend["slope_per_year"])
+        trend_columns[1].metric(
+            "95% slope interval",
+            f"{trend['slope_ci_lower']} to {trend['slope_ci_upper']}",
+        )
+        trend_columns[2].metric("p-value", trend["p_value"])
+        trend_columns[3].metric("Valid years", trend["count"])
+        st.dataframe(ndvi_series["periods"], hide_index=True)
+    else:
+        st.warning(f"Fixed-season trend refused: {trend['reason']}")
 
 observations = load_observations()
 indicator_key = st.sidebar.selectbox(

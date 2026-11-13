@@ -40,3 +40,35 @@ def regional_means(
         {"region": region, "mean_value": round(mean(grouped[region]), 4)}
         for region in sorted(grouped)
     ]
+
+
+def linear_trend(
+    years: Iterable[int], values: Iterable[float], confidence: float = 0.95
+) -> dict[str, float | int]:
+    """Fit an OLS linear trend with a two-sided slope confidence interval and p-value."""
+    x, y = list(years), list(values)
+    if len(x) != len(y) or len(x) < 3:
+        raise ValueError("A trend requires at least three paired annual or seasonal observations.")
+    if len(set(x)) != len(x):
+        raise ValueError("Trend years must be unique.")
+    if not 0 < confidence < 1:
+        raise ValueError("Confidence must be between zero and one.")
+    try:
+        from scipy.stats import linregress, t
+    except ImportError as error:
+        raise RuntimeError("scipy is required for trend confidence intervals and p-values.") from error
+
+    regression = linregress(x, y)
+    degrees_of_freedom = len(x) - 2
+    critical_value = t.ppf((1 + confidence) / 2, degrees_of_freedom)
+    margin = critical_value * regression.stderr
+    return {
+        "count": len(x),
+        "slope_per_year": round(float(regression.slope), 6),
+        "intercept": round(float(regression.intercept), 6),
+        "r_squared": round(float(regression.rvalue**2), 6),
+        "p_value": round(float(regression.pvalue), 6),
+        "confidence_level": confidence,
+        "slope_ci_lower": round(float(regression.slope - margin), 6),
+        "slope_ci_upper": round(float(regression.slope + margin), 6),
+    }
