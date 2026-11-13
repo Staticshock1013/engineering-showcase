@@ -52,6 +52,13 @@ cd projects/06-terratrend-global
 python -m pytest
 ```
 
+## Phase 3/5 readiness documents
+
+- [Architecture](docs/architecture.md)
+- [Methodology](docs/methodology.md)
+- [Data sources and provenance](docs/data-sources.md)
+- [Limitations](docs/limitations.md)
+
 ## NASA MOD11A2 verified sample
 
 Terra MODIS `MOD11A2` version `061` is an eight-day, 1200×1200 (nominal 1 km) sinusoidal

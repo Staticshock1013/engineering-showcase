@@ -27,6 +27,10 @@ def test_verified_cache_registry_accepts_matching_product_and_status(tmp_path):
     assert entries[0]["cache_path"] == "london.json"
 
 
+def test_verified_cache_registry_is_empty_when_no_processed_data_exists(tmp_path):
+    assert load_verified_cache_registry(tmp_path) == []
+
+
 def test_verified_cache_registry_rejects_unregistered_status(tmp_path):
     payload = _cache_payload()
     payload["data_status"] = "annual"

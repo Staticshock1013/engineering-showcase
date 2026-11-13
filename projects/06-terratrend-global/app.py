@@ -3,20 +3,26 @@
 import plotly.express as px
 import streamlit as st
 
-from terratrend.cache import load_verified_cache_registry
 from terratrend.data import load_observations
+from terratrend.dashboard import load_verified_cache_state
 from terratrend.registry import INDICATOR_REGISTRY
 from terratrend.statistics import indicator_summary, regional_means
 
 st.set_page_config(page_title="TerraTrend Global", page_icon="🌍", layout="wide")
 st.title("TerraTrend Global")
-st.caption("Phase 1 environmental-change intelligence MVP")
+st.caption("Environmental-change intelligence MVP — synthetic global prototype with verified samples")
 st.warning(
     "The global charts below use deterministic synthetic fixtures only. They are not NASA data "
     "and must not be used for scientific or operational decisions."
 )
 
-verified_caches = load_verified_cache_registry()
+cache_state = load_verified_cache_state()
+verified_caches = cache_state.entries
+if cache_state.status == "unavailable":
+    st.error(
+        "Verified processed data could not be loaded, so it is not displayed. "
+        "The global charts remain labeled synthetic fixtures."
+    )
 if verified_caches:
     processed = st.selectbox(
         "Verified processed MOD11A2 cache",
@@ -41,12 +47,22 @@ if verified_caches:
                 "data_status": processed["data_status"],
                 "product": processed["provenance"]["product_short_name"],
                 "version": processed["provenance"]["product_version"],
+                "provider": processed["provenance"]["provider"],
+                "cmr_concept_id": processed["provenance"]["cmr_concept_id"],
                 "granule": processed["provenance"]["granule_ur"],
                 "time_start": composite["time_start"],
                 "time_end": composite["time_end"],
                 "qc_rule": processed["processing"]["qc_rule"],
+                "product_documentation": processed["product_documentation"],
+                "cmr_query": processed["provenance"]["query_url"],
+                "source_data_url": processed["provenance"]["data_url"],
             }
         )
+else:
+    st.info(
+        "No verified processed cache is available. Only the clearly labeled synthetic global "
+        "prototype is shown."
+    )
 
 observations = load_observations()
 indicator_key = st.sidebar.selectbox(
@@ -99,7 +115,8 @@ st.plotly_chart(bar_figure, width="stretch")
 
 with st.expander("Data provenance and scope"):
     st.write(
-        "This MVP contains a compact registry and labeled, deterministic CSV fixtures only. "
-        "A live data connector is intentionally out of scope for Phase 1."
+        "The global map and regional bars use labeled deterministic fixtures. Verified MOD11A2 "
+        "entries, when available above, are separate authenticated source-data caches with "
+        "product, CMR, and processing provenance. Neither single 8-day sample is annual or global."
     )
     st.code(definition.source_family)
