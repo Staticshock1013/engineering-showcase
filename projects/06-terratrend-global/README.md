@@ -104,6 +104,19 @@ Only pixels with detailed VI-quality bits 0–1 equal to `00` and pixel reliabil
 credential-free cache is `terratrend/processed/mod13a2_nyc_2024-06-25.json`. It is selectable in
 the dashboard’s verified-data variable control and is not an annual value or trend.
 
+## Safe city comparison and CSV export
+
+The dashboard keeps verified period caches separate from synthetic global fixtures. It exports
+verified cache CSVs with product/version, period coverage, pixel counts, QC/spatial methodology,
+and CMR provenance; synthetic-fixture exports retain their non-observational label and fixture
+methodology.
+
+A city comparison is enabled only when exactly two verified caches have the same product/variable,
+unit, aggregation status, exact time interval, and QC/spatial-sampling method. Different products,
+different periods, synthetic fixtures, and incomplete/non-annual data are refused rather than
+shown as a misleading city difference. The current New York City and London LST samples have
+different periods, so the dashboard correctly refuses their comparison.
+
 ## Safe batch ingestion
 
 `terratrend.ingestion` plans MOD11A2 product-aligned eight-day periods before making any network

@@ -5,6 +5,11 @@ import streamlit as st
 
 from terratrend.data import load_observations
 from terratrend.dashboard import load_verified_cache_state
+from terratrend.presentation import (
+    compare_verified_cities,
+    synthetic_fixture_csv,
+    verified_cache_csv,
+)
 from terratrend.registry import INDICATOR_REGISTRY, VERIFIED_DATA_REGISTRY
 from terratrend.statistics import indicator_summary, regional_means
 
@@ -45,7 +50,7 @@ if verified_caches:
     verified_columns[0].metric(f"Verified sample mean ({verified_definition.unit})", mean_value)
     verified_columns[1].metric("QC-passing pixels", composite["valid_pixel_count"])
     verified_columns[2].metric("Spatially sampled pixels", composite["selected_pixel_count"])
-    with st.expander("Verified MOD11A2 sample provenance"):
+    with st.expander("Verified sample provenance"):
         st.json(
             {
                 "data_status": processed["data_status"],
@@ -63,6 +68,37 @@ if verified_caches:
                 "source_data_url": processed["provenance"]["data_url"],
             }
         )
+    st.download_button(
+        "Download all verified period caches as CSV",
+        data=verified_cache_csv(verified_caches),
+        file_name="terratrend-verified-period-caches.csv",
+        mime="text/csv",
+        help="Includes product, QC, spatial sampling, temporal coverage, and CMR provenance.",
+    )
+
+    cache_by_path = {cache["cache_path"]: cache for cache in verified_caches}
+    selected_cache_paths = st.multiselect(
+        "Compare two verified city caches",
+        options=list(cache_by_path),
+        format_func=lambda path: (
+            f"{VERIFIED_DATA_REGISTRY[cache_by_path[path]['data_product_key']].variable_name}: "
+            f"{cache_by_path[path]['composite']['city']} — "
+            f"{cache_by_path[path]['composite']['time_start'][:10]}"
+        ),
+        help=(
+            "Only two caches with the same product, unit, QC/spatial method, and exact period "
+            "can be compared. Synthetic fixtures are never eligible."
+        ),
+    )
+    if selected_cache_paths:
+        comparison = compare_verified_cities(
+            [cache_by_path[path] for path in selected_cache_paths]
+        )
+        if comparison.compatible:
+            st.success(comparison.reason)
+            st.dataframe(comparison.rows, hide_index=True)
+        else:
+            st.warning(f"City comparison refused: {comparison.reason}")
 else:
     st.info(
         "No verified processed cache is available. Only the clearly labeled synthetic global "
@@ -117,6 +153,13 @@ bar_figure = px.bar(
     title="Mean synthetic value by region",
 )
 st.plotly_chart(bar_figure, width="stretch")
+st.download_button(
+    "Download selected synthetic fixture as CSV",
+    data=synthetic_fixture_csv(selected, definition),
+    file_name=f"terratrend-synthetic-{indicator_key}.csv",
+    mime="text/csv",
+    help="This CSV is explicitly labeled synthetic and is not verified Earth-observation data.",
+)
 
 with st.expander("Data provenance and scope"):
     st.write(
