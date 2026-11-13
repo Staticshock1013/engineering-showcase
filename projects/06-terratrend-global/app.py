@@ -6,15 +6,16 @@ from pathlib import Path
 import plotly.express as px
 import streamlit as st
 
+from terratrend.availability import availability_map_rows
 from terratrend.data import load_observations
-from terratrend.dashboard import load_verified_cache_state
+from terratrend.dashboard import load_lst_availability_state, load_verified_cache_state
 from terratrend.presentation import (
     compare_fixed_season_trends,
     compare_verified_cities,
     synthetic_fixture_csv,
     verified_cache_csv,
 )
-from terratrend.registry import INDICATOR_REGISTRY, VERIFIED_DATA_REGISTRY
+from terratrend.registry import INDICATOR_REGISTRY, LST_EXPANSION_COVERAGE, VERIFIED_DATA_REGISTRY
 from terratrend.ndvi_series import load_fixed_season_series
 from terratrend.statistics import indicator_summary, regional_means
 
@@ -33,11 +34,59 @@ st.warning(
 
 cache_state = load_verified_cache_state()
 verified_caches = cache_state.entries
+availability_state = load_lst_availability_state()
 if cache_state.status == "unavailable":
     st.error(
         "Verified processed data could not be loaded, so it is not displayed. "
         "The global charts remain labeled synthetic fixtures."
     )
+if availability_state.status == "unavailable":
+    st.error(
+        "Expansion-city LST availability could not be loaded. No fabricated city values are shown."
+    )
+elif availability_state.cities:
+    st.subheader("Expansion-city MOD11A2 LST availability")
+    st.caption(
+        "Lagos, Tokyo, Mumbai, and São Paulo use tile-contained sampling windows. "
+        "The preferred shared period is 2024-06-25 to 2024-07-02 when a single MODIS tile "
+        "fully covers the bbox. Failed preferred windows are marked unavailable; alternate "
+        "verified periods are not forced into cross-city comparison and are not city-wide or annual."
+    )
+    availability_rows = [
+        {
+            "city": city.city,
+            "status": city.status,
+            "shared_window": city.shared_window_status,
+            "period_start": (city.period_start or "")[:10] or None,
+            "period_end": (city.period_end or "")[:10] or None,
+            "mean_celsius": city.mean_celsius,
+            "valid_pixels": city.valid_pixel_count,
+            "selected_pixels": city.selected_pixel_count,
+            "registry_coverage": LST_EXPANSION_COVERAGE.get(city.city),
+            "reason": city.reason,
+        }
+        for city in availability_state.cities
+    ]
+    st.dataframe(availability_rows, hide_index=True)
+    availability_map = px.scatter_geo(
+        availability_map_rows(availability_state.cities),
+        lat="latitude",
+        lon="longitude",
+        color="availability",
+        hover_name="city",
+        hover_data={
+            "shared_window": True,
+            "period_start": True,
+            "period_end": True,
+            "mean_celsius": True,
+            "reason": True,
+            "latitude": False,
+            "longitude": False,
+        },
+        projection="natural earth",
+        title="Verified LST expansion cities (availability states, not synthetic fixtures)",
+    )
+    st.plotly_chart(availability_map, width="stretch")
 if verified_caches:
     processed = st.selectbox(
         "Verified processed data variable",
@@ -222,6 +271,8 @@ with st.expander("Data provenance and scope"):
     st.write(
         "The global map and regional bars use labeled deterministic fixtures. Verified MOD11A2 "
         "entries, when available above, are separate authenticated source-data caches with "
-        "product, CMR, and processing provenance. Neither single 8-day sample is annual or global."
+        "product, CMR, and processing provenance. Expansion-city availability states disclose "
+        "shared-window failures without fabricating values. No single 8-day sample is annual, "
+        "city-wide, or global."
     )
     st.code(definition.source_family)

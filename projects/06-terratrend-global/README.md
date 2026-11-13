@@ -5,8 +5,9 @@ dashboard can organize indicators, display regional context, and calculate repea
 
 > **Data status:** the global dashboard charts are labeled deterministic synthetic fixtures and are
 > unsuitable for scientific, policy, or operational decisions. Separate, cached MOD11A2 v6.1
-> land-surface-temperature samples and one MOD13A2 v6.1 NDVI sample are processed from
-> authenticated source data with provenance. None is a global, annual, or decision-ready result.
+> land-surface-temperature samples (including Lagos, Tokyo, Mumbai, and São Paulo expansion
+> cities) and one MOD13A2 v6.1 NDVI sample are processed from authenticated source data with
+> provenance. None is a global, annual, city-wide, or decision-ready result.
 
 ## Problem and approach
 
@@ -88,7 +89,11 @@ https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=MOD11A2&versi
 ```
 
 The same validated workflow also processed the geographically distinct London granule
-`MOD11A2.A2024177.h17v03.061.2024186042347` for 2024-06-25 through 2024-07-02.
+`MOD11A2.A2024177.h17v03.061.2024186042347` for 2024-06-25 through 2024-07-02, plus
+tile-contained expansion-city samples for Lagos, Tokyo, Mumbai, and São Paulo. São Paulo matches
+the preferred shared 2024-06-25–07-02 window; Lagos/Tokyo/Mumbai failed that window's QC checks,
+so unavailable markers were recorded and alternate verified periods were retained without forcing
+comparability.
 
 The decoder validates the retrieved file metadata against the [official MOD11 User Guide
 v6.1](https://lpdaac.usgs.gov/documents/715/MOD11_User_Guide_V61.pdf): `LST_Day_1km` must be

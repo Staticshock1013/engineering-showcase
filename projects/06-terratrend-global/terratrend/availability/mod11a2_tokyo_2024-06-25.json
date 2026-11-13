@@ -1,0 +1,17 @@
+{
+  "alternate_verified_cache": "mod11a2_tokyo_2024-03-21.json",
+  "bounding_box": [
+    139.6,
+    35.6,
+    139.85,
+    35.75
+  ],
+  "city": "Tokyo",
+  "claim": "no_fabricated_value",
+  "data_product_key": "mod11a2_v061_daytime_lst",
+  "granule_ur": "MOD11A2.A2024177.h29v05.061.2024186041456",
+  "period_end": "2024-07-02",
+  "period_start": "2024-06-25",
+  "reason": "No pixels pass spatial, LST validity, and QC requirements for the preferred shared window.",
+  "status": "unavailable"
+}

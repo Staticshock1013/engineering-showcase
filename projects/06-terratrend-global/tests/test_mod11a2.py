@@ -7,6 +7,7 @@ from terratrend.mod11a2 import (
     Mod11A2ValidationError,
     ProcessedComposite,
     annual_mean_celsius,
+    bbox_fully_covered_by_tile,
     good_daytime_qc,
     tile_pixel_centers,
 )
@@ -48,6 +49,18 @@ def test_sinusoidal_pixel_centers_are_deterministic_for_modis_tile():
     assert longitude.shape == (1200, 1200)
     assert latitude[0, 0] > latitude[-1, 0]
     assert longitude[0, 0] < longitude[0, -1]
+
+
+def test_bbox_coverage_helper_distinguishes_complete_and_partial_tiles():
+    nyc_bbox = (-74.1, 40.6, -73.7, 40.9)
+    london_bbox = (-0.35, 51.3, 0.2, 51.7)
+
+    assert bbox_fully_covered_by_tile(
+        "MOD11A2.A2024177.h12v04.061.2024186041340", nyc_bbox
+    )
+    assert not bbox_fully_covered_by_tile(
+        "MOD11A2.A2024177.h17v03.061.2024186042347", london_bbox
+    )
 
 
 def test_annual_mean_is_weighted_for_short_final_composite():

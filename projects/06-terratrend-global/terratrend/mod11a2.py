@@ -113,8 +113,33 @@ def _composite_days(time_start: str, time_end: str) -> int:
     return days
 
 
-def process_hdf4_composite(path: Path, provenance: GranuleProvenance, city: City) -> ProcessedComposite:
-    """Decode one validated MOD11A2 HDF4 granule into a city spatial mean."""
+def bbox_fully_covered_by_tile(
+    granule_ur: str, bounding_box: tuple[float, float, float, float], shape: tuple[int, int] = (PIXELS_PER_TILE, PIXELS_PER_TILE)
+) -> bool:
+    """Return True when every corner of the sampling bbox lies inside the MODIS tile."""
+    latitude, longitude = tile_pixel_centers(granule_ur, shape)
+    west, south, east, north = bounding_box
+    return bool(
+        float(longitude.min()) <= west <= float(longitude.max())
+        and float(longitude.min()) <= east <= float(longitude.max())
+        and float(latitude.min()) <= south <= float(latitude.max())
+        and float(latitude.min()) <= north <= float(latitude.max())
+    )
+
+
+def process_hdf4_composite(
+    path: Path,
+    provenance: GranuleProvenance,
+    city: City,
+    *,
+    require_complete_bbox: bool = False,
+) -> ProcessedComposite:
+    """Decode one validated MOD11A2 HDF4 granule into a city spatial mean.
+
+    Set ``require_complete_bbox=True`` for expansion cities so a partial tile cannot be
+    labeled as a complete sampling-window result. Existing London samples keep the looser
+    intersection rule because that bbox intentionally crosses a tile boundary.
+    """
     try:
         from pyhdf.SD import SD, SDC
     except ImportError as error:
@@ -134,6 +159,12 @@ def process_hdf4_composite(path: Path, provenance: GranuleProvenance, city: City
         raise Mod11A2ValidationError("LST and QC datasets must have the same dimensions.")
     latitude, longitude = tile_pixel_centers(provenance.granule_ur, lst.shape)
     west, south, east, north = city.bounding_box
+    if require_complete_bbox and not bbox_fully_covered_by_tile(
+        provenance.granule_ur, city.bounding_box, lst.shape
+    ):
+        raise Mod11A2ValidationError(
+            "City bounding box is not fully represented by the retrieved MODIS tile."
+        )
     spatial_mask = (longitude >= west) & (longitude <= east) & (latitude >= south) & (latitude <= north)
     selected_pixel_count = int(np.count_nonzero(spatial_mask))
     if not selected_pixel_count:

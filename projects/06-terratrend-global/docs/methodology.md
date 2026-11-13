@@ -13,6 +13,11 @@ eight-day composites for an explicit city bounding box.
 5. MODIS sinusoidal pixel centers are transformed to latitude/longitude and included only when
    they fall within the city bounding box. Accepted raw values are converted to Celsius with
    `raw * 0.02 - 273.15`; the cache stores counts and a mean.
+6. Expansion cities (Lagos, Tokyo, Mumbai, São Paulo) use tile-contained sampling windows. When
+   ingesting those cities, the decoder can require the retrieved MODIS tile to fully cover the
+   sampling bbox. The preferred shared window is 2024-06-25–07-02; if that window fails QC or
+   coverage validation, an explicit unavailable marker is written and no value is fabricated.
+   An alternate verified period may be retained without forcing cross-city comparability.
 
 Annual aggregation is duration-weighted and requires complete contiguous calendar coverage.
 Fixed-season runs are explicitly not annual. Incomplete annual coverage, fixed-season values, and

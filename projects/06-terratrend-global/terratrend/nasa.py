@@ -48,6 +48,13 @@ LONDON = City("London", (-0.35, 51.30, 0.20, 51.70))
 # The original London bbox crosses the MODIS h17/h18 tile boundary. This analysis window
 # is intentionally contained in h17 so each fixed-season period has complete tile coverage.
 LONDON_WEST_TILE = City("London (west tile)", (-0.30, 51.35, -0.05, 51.65))
+# Phase-4 expansion cities use tile-contained sampling windows, not administrative city extents.
+LAGOS = City("Lagos", (-3.50, 6.40, -3.25, 6.55))
+TOKYO = City("Tokyo", (139.60, 35.60, 139.85, 35.75))
+MUMBAI = City("Mumbai", (72.80, 18.90, 73.00, 19.10))
+SAO_PAULO = City("São Paulo", (-46.75, -23.65, -46.50, -23.45))
+
+LST_EXPANSION_CITIES = (LAGOS, TOKYO, MUMBAI, SAO_PAULO)
 
 
 @dataclass(frozen=True)

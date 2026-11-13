@@ -8,16 +8,24 @@ observation data.
 
 ## Verified MOD11A2 samples
 
-The processed cache contains three independently authenticated Terra MODIS `MOD11A2` v061 daytime
+The processed cache contains independently authenticated Terra MODIS `MOD11A2` v061 daytime
 eight-day samples:
 
 - New York City: `MOD11A2.A2024001.h12v04.061.2024011195232`, 2024-01-01 to 2024-01-08.
 - London: `MOD11A2.A2024177.h17v03.061.2024186042347`, 2024-06-25 to 2024-07-02.
 - New York City: `MOD11A2.A2024177.h12v04.061.2024186041340`, 2024-06-25 to 2024-07-02.
+- São Paulo: `MOD11A2.A2024177.h13v11.061.2024186040945`, 2024-06-25 to 2024-07-02.
+- Lagos: `MOD11A2.A2024001.h17v08.061.2024011195019`, 2024-01-01 to 2024-01-08.
+- Tokyo: `MOD11A2.A2024081.h29v05.061.2024094225606`, 2024-03-21 to 2024-03-28.
+- Mumbai: `MOD11A2.A2024049.h24v07.061.2024061081515`, 2024-02-18 to 2024-02-25.
 
-The final two samples have the same product, exact period, QC rule, and spatial-sampling method,
-so they are eligible for the dashboard's verified period-level city comparison. That comparison
-does not make an annual or trend claim.
+The New York City and London samples for 2024-06-25 to 2024-07-02 have the same product, exact
+period, QC rule, and spatial-sampling method, so they are eligible for the dashboard's verified
+period-level city comparison. That comparison does not make an annual or trend claim. São Paulo
+matches that preferred shared window under a tile-contained sampling bbox. Lagos, Tokyo, and
+Mumbai failed QC for the preferred shared window; their unavailable markers are stored under
+`terratrend/availability/` and alternate verified periods are retained without forcing
+comparability.
 
 Each `terratrend/processed/*.json` file records its CMR concept ID, provider, query URL, protected
 data URL, temporal extent, product documentation URL, processing rule, and pixel counts. The

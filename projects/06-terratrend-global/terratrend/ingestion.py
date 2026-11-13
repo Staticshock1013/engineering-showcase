@@ -23,7 +23,28 @@ from .mod11a2 import (
     process_hdf4_composite,
     save_processed_composite,
 )
-from .nasa import City, GranuleProvenance, LONDON, MOD11A2_V061, NEW_YORK_CITY, protected_download_headers, search_granule_metadata
+from .nasa import (
+    City,
+    GranuleProvenance,
+    LAGOS,
+    LONDON,
+    MOD11A2_V061,
+    MUMBAI,
+    NEW_YORK_CITY,
+    SAO_PAULO,
+    TOKYO,
+    protected_download_headers,
+    search_granule_metadata,
+)
+
+CITY_CHOICES = {
+    "london": LONDON,
+    "new-york-city": NEW_YORK_CITY,
+    "lagos": LAGOS,
+    "tokyo": TOKYO,
+    "mumbai": MUMBAI,
+    "sao-paulo": SAO_PAULO,
+}
 
 Mode = Literal["annual", "fixed-season"]
 
@@ -279,7 +300,7 @@ def _parse_season(value: str) -> tuple[tuple[int, int], tuple[int, int]]:
 def main() -> None:
     """Offer an explicit dry-run CLI; --apply is required for any network/download action."""
     parser = argparse.ArgumentParser(description="Plan or boundedly ingest MOD11A2 city composites.")
-    parser.add_argument("--city", choices=("london", "new-york-city"), default="london")
+    parser.add_argument("--city", choices=tuple(CITY_CHOICES), default="london")
     parser.add_argument("--years", required=True, help="Comma-separated calendar years.")
     parser.add_argument("--mode", choices=("annual", "fixed-season"), default="annual")
     parser.add_argument("--season", type=_parse_season, help="Required fixed season: MM-DD:MM-DD.")
@@ -290,7 +311,7 @@ def main() -> None:
     parser.add_argument("--rate-limit-seconds", type=float, default=1.0)
     arguments = parser.parse_args()
     season_start, season_end = arguments.season if arguments.season else (None, None)
-    city = LONDON if arguments.city == "london" else NEW_YORK_CITY
+    city = CITY_CHOICES[arguments.city]
     plan = build_batch_plan(
         city,
         (int(value) for value in arguments.years.split(",")),

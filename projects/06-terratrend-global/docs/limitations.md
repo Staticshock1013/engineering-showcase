@@ -1,8 +1,12 @@
 # Limitations
 
 - The global dashboard charts are synthetic fixture visualizations, not real global indicators.
-- Verified real-data caches cover three city-level eight-day MOD11A2 periods and one city-level
-  16-day MOD13A2 NDVI period. They are neither annual measurements nor a multiyear time series.
+- Verified real-data caches cover multiple city-level eight-day MOD11A2 periods and one city-level
+  16-day MOD13A2 NDVI period. Expansion cities use tile-contained sampling windows, not
+  administrative city extents, and are neither annual measurements nor multiyear time series.
+- Lagos, Tokyo, and Mumbai have no QC-passing pixels for the preferred 2024-06-25–07-02 shared
+  window; that failure is recorded as unavailable rather than fabricated. Their alternate verified
+  periods are not comparable to the shared-window cities.
 - MOD11A2 is daytime land-surface temperature, not near-surface air temperature. Its selected
   QC criteria and city bounding-box mean are implementation choices recorded in provenance.
 - No uncertainty interval, station comparison, land-cover stratification, or urban/rural

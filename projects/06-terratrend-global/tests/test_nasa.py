@@ -6,10 +6,15 @@ import pytest
 
 from terratrend.nasa import (
     AuthenticationRequiredError,
+    LAGOS,
     LONDON,
+    LST_EXPANSION_CITIES,
     LiveDataUnavailableError,
     MOD11A2_V061,
+    MUMBAI,
     NEW_YORK_CITY,
+    SAO_PAULO,
+    TOKYO,
     build_granule_query,
     fetch_observations,
     protected_download_headers,
@@ -33,6 +38,14 @@ def test_mod11a2_query_is_reproducible_for_new_york_city():
 def test_london_city_bounds_are_explicit_for_reproducible_sampling():
     assert LONDON.name == "London"
     assert LONDON.bounding_box == (-0.35, 51.30, 0.20, 51.70)
+
+
+def test_expansion_city_bounds_are_explicit_tile_contained_windows():
+    assert LAGOS.bounding_box == (-3.50, 6.40, -3.25, 6.55)
+    assert TOKYO.bounding_box == (139.60, 35.60, 139.85, 35.75)
+    assert MUMBAI.bounding_box == (72.80, 18.90, 73.00, 19.10)
+    assert SAO_PAULO.bounding_box == (-46.75, -23.65, -46.50, -23.45)
+    assert LST_EXPANSION_CITIES == (LAGOS, TOKYO, MUMBAI, SAO_PAULO)
 
 
 def test_catalog_adapter_returns_metadata_provenance_without_observations():

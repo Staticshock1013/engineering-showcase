@@ -49,10 +49,14 @@ def test_city_comparison_refuses_different_products():
 def test_city_comparison_allows_matching_verified_metadata():
     lst, _ = _caches()
     matching_period = [
-        entry
-        for entry in lst
-        if entry["composite"]["time_start"].startswith("2024-06-25")
-        and entry["composite"]["time_end"].startswith("2024-07-02")
+        next(
+            entry
+            for entry in lst
+            if entry["composite"]["city"] == city
+            and entry["composite"]["time_start"].startswith("2024-06-25")
+            and entry["composite"]["time_end"].startswith("2024-07-02")
+        )
+        for city in ("London", "New York City")
     ]
 
     comparison = compare_verified_cities(matching_period)
@@ -60,6 +64,22 @@ def test_city_comparison_allows_matching_verified_metadata():
     assert comparison.compatible
     assert {row["city"] for row in comparison.rows} == {"London", "New York City"}
     assert all(row["unit"] == "°C" for row in comparison.rows)
+
+
+def test_city_comparison_refuses_more_than_two_matching_period_caches():
+    lst, _ = _caches()
+    june_window = [
+        entry
+        for entry in lst
+        if entry["composite"]["time_start"].startswith("2024-06-25")
+        and entry["composite"]["time_end"].startswith("2024-07-02")
+    ]
+
+    comparison = compare_verified_cities(june_window)
+
+    assert len(june_window) >= 3
+    assert not comparison.compatible
+    assert "exactly two" in comparison.reason
 
 
 def test_verified_csv_includes_provenance_and_period_coverage():

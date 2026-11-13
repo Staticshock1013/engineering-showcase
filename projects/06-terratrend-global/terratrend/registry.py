@@ -73,5 +73,16 @@ VERIFIED_DATA_REGISTRY = {
         data_status="verified_real_mod13a2_16_day_composite_not_annual",
         variable_name="Normalized Difference Vegetation Index",
         unit="NDVI",
-    )
+    ),
+}
+
+# Expansion-city LST coverage is tracked separately from synthetic global fixtures.
+# Preferred shared window: 2024-06-25 through 2024-07-02 when a single MODIS tile fully
+# covers the sampling bbox. Cities that fail that window are marked unavailable for it
+# and may retain a different verified period without forcing cross-city comparability.
+LST_EXPANSION_COVERAGE = {
+    "Lagos": "verified_alternate_period_shared_window_unavailable",
+    "Tokyo": "verified_alternate_period_shared_window_unavailable",
+    "Mumbai": "verified_alternate_period_shared_window_unavailable",
+    "São Paulo": "verified_shared_window",
 }

@@ -1,0 +1,17 @@
+{
+  "alternate_verified_cache": "mod11a2_lagos_2024-01-01.json",
+  "bounding_box": [
+    -3.5,
+    6.4,
+    -3.25,
+    6.55
+  ],
+  "city": "Lagos",
+  "claim": "no_fabricated_value",
+  "data_product_key": "mod11a2_v061_daytime_lst",
+  "granule_ur": "MOD11A2.A2024177.h17v08.061.2024186042459",
+  "period_end": "2024-07-02",
+  "period_start": "2024-06-25",
+  "reason": "No pixels pass spatial, LST validity, and QC requirements for the preferred shared window.",
+  "status": "unavailable"
+}
