@@ -34,6 +34,9 @@ schema. The product guide publishes a 0.0001 scale; the validated HDF file recor
 divisor 10000, so raw NDVI is divided by 10000. A pixel must have detailed VI-quality bits 0–1
 equal to `00` and pixel reliability `0`. The implementation rejects city bboxes not fully covered
 by the retrieved MODIS tile, preventing a partial tile from being labeled as a city sample.
+São Paulo’s packaged DOY-177 period cache additionally required a ≥10% QC-passing pixel fraction
+before acceptance; failed preferred LST windows remain unavailable markers rather than fabricated
+values.
 
 ## NYC fixed-season series
 

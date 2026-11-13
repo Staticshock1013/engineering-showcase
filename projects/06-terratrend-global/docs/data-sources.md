@@ -25,7 +25,8 @@ period-level city comparison. That comparison does not make an annual or trend c
 matches that preferred shared window under a tile-contained sampling bbox. Lagos, Tokyo, and
 Mumbai failed QC for the preferred shared window; their unavailable markers are stored under
 `terratrend/availability/` and alternate verified periods are retained without forcing
-comparability.
+comparability. The dashboard coverage map shows all six cities with honest verified vs
+unavailable LST states plus NDVI period flags where present.
 
 Each `terratrend/processed/*.json` file records its CMR concept ID, provider, query URL, protected
 data URL, temporal extent, product documentation URL, processing rule, and pixel counts. The
@@ -37,11 +38,17 @@ v6.1](https://lpdaac.usgs.gov/documents/715/MOD11_User_Guide_V61.pdf). CMR is us
 and granule metadata. The local application does not treat catalog metadata alone as an
 observation.
 
-## Verified MOD13A2 NDVI sample
+## Verified MOD13A2 NDVI samples
 
-New York City also has one authenticated `MOD13A2` v061 NDVI cache:
-`MOD13A2.A2024177.h12v04.061.2024195022551`, covering 2024-06-25 to 2024-07-10. Its provenance is
-stored in `terratrend/processed/mod13a2_nyc_2024-06-25.json`. NDVI semantics and QA come from the
+Authenticated `MOD13A2` v061 NDVI period caches:
+
+- New York City: `MOD13A2.A2024177.h12v04.061.2024195022551`, 2024-06-25 to 2024-07-10
+  (`terratrend/processed/mod13a2_nyc_2024-06-25.json`).
+- São Paulo: `MOD13A2.A2024177.h13v11.061.2024195021300`, 2024-06-25 to 2024-07-10
+  (`terratrend/processed/mod13a2_sao_paulo_2024-06-25.json`), accepted only after the strict
+  complete-bbox and ≥10% QC-passing pixel checks.
+
+NDVI semantics and QA come from the
 [MOD13 User Guide v6.1](https://lpdaac.usgs.gov/documents/621/MOD13_User_Guide_V61.pdf).
 
 The bounded historical fixed-season cache is in `terratrend/series/nyc-mod13a2-doy177/`. Its

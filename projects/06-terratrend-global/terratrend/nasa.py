@@ -55,6 +55,8 @@ MUMBAI = City("Mumbai", (72.80, 18.90, 73.00, 19.10))
 SAO_PAULO = City("São Paulo", (-46.75, -23.65, -46.50, -23.45))
 
 LST_EXPANSION_CITIES = (LAGOS, TOKYO, MUMBAI, SAO_PAULO)
+# Full verified-city coverage set shown on the map/dashboard (legacy + expansion).
+VERIFIED_LST_CITIES = (NEW_YORK_CITY, LONDON, LAGOS, TOKYO, MUMBAI, SAO_PAULO)
 
 
 @dataclass(frozen=True)

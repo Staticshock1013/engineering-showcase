@@ -5,9 +5,10 @@ dashboard can organize indicators, display regional context, and calculate repea
 
 > **Data status:** the global dashboard charts are labeled deterministic synthetic fixtures and are
 > unsuitable for scientific, policy, or operational decisions. Separate, cached MOD11A2 v6.1
-> land-surface-temperature samples (including Lagos, Tokyo, Mumbai, and São Paulo expansion
-> cities) and one MOD13A2 v6.1 NDVI sample are processed from authenticated source data with
-> provenance. None is a global, annual, city-wide, or decision-ready result.
+> land-surface-temperature samples for six cities (New York City, London, Lagos, Tokyo, Mumbai,
+> São Paulo) and MOD13A2 v6.1 NDVI period samples for New York City and São Paulo are processed
+> from authenticated source data with provenance. None is a global, annual, city-wide, or
+> decision-ready result.
 
 ## Problem and approach
 
@@ -111,7 +112,7 @@ eight-day weight, and it rejects incomplete or non-contiguous calendar coverage.
 reusable function rather than a claimed annual result: each cached result contains one eight-day
 composite only.
 
-## NASA MOD13A2 verified NDVI sample
+## NASA MOD13A2 verified NDVI samples
 
 An authenticated New York City retrieval processed
 `MOD13A2.A2024177.h12v04.061.2024195022551` for 2024-06-25 through 2024-07-10.
@@ -122,9 +123,11 @@ NDVI scale is 0.0001; the retrieved file records its inverse divisor (10000), so
 values are divided by 10000 after validation.
 
 Only pixels with detailed VI-quality bits 0–1 equal to `00` and pixel reliability equal to `0`
-(good data) are sampled within the complete New York City bounding box. The period-level,
-credential-free cache is `terratrend/processed/mod13a2_nyc_2024-06-25.json`. It is selectable in
-the dashboard’s verified-data variable control and is not an annual value or trend.
+(good data) are sampled within the complete city bounding box. Period-level credential-free
+caches are `terratrend/processed/mod13a2_nyc_2024-06-25.json` and
+`terratrend/processed/mod13a2_sao_paulo_2024-06-25.json`. São Paulo was accepted only after the
+complete-bbox and ≥10% QC-passing pixel checks. Both are selectable in the dashboard’s
+verified-data variable control and are not annual values or trends.
 
 ## Safe city comparison and CSV export
 

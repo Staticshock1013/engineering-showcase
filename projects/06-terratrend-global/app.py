@@ -15,7 +15,7 @@ from terratrend.presentation import (
     synthetic_fixture_csv,
     verified_cache_csv,
 )
-from terratrend.registry import INDICATOR_REGISTRY, LST_EXPANSION_COVERAGE, VERIFIED_DATA_REGISTRY
+from terratrend.registry import CITY_LST_COVERAGE, INDICATOR_REGISTRY, VERIFIED_DATA_REGISTRY
 from terratrend.ndvi_series import load_fixed_season_series
 from terratrend.statistics import indicator_summary, regional_means
 
@@ -42,40 +42,52 @@ if cache_state.status == "unavailable":
     )
 if availability_state.status == "unavailable":
     st.error(
-        "Expansion-city LST availability could not be loaded. No fabricated city values are shown."
+        "Verified-city coverage could not be loaded. No fabricated city values are shown."
     )
 elif availability_state.cities:
-    st.subheader("Expansion-city MOD11A2 LST availability")
+    st.subheader("Verified-city coverage (six cities)")
     st.caption(
-        "Lagos, Tokyo, Mumbai, and São Paulo use tile-contained sampling windows. "
-        "The preferred shared period is 2024-06-25 to 2024-07-02 when a single MODIS tile "
-        "fully covers the bbox. Failed preferred windows are marked unavailable; alternate "
-        "verified periods are not forced into cross-city comparison and are not city-wide or annual."
+        "New York City, London, Lagos, Tokyo, Mumbai, and São Paulo. LST preferred shared "
+        "period is 2024-06-25 to 2024-07-02 when a single MODIS tile fully covers the sampling "
+        "bbox. Failed preferred windows are marked unavailable; alternate verified periods are "
+        "not forced into cross-city comparison and are not city-wide or annual. NDVI period "
+        "status is shown separately and is also period-level only."
     )
     availability_rows = [
         {
             "city": city.city,
-            "status": city.status,
+            "lst_status": city.status,
             "shared_window": city.shared_window_status,
-            "period_start": (city.period_start or "")[:10] or None,
-            "period_end": (city.period_end or "")[:10] or None,
+            "lst_period_start": (city.period_start or "")[:10] or None,
+            "lst_period_end": (city.period_end or "")[:10] or None,
             "mean_celsius": city.mean_celsius,
             "valid_pixels": city.valid_pixel_count,
             "selected_pixels": city.selected_pixel_count,
-            "registry_coverage": LST_EXPANSION_COVERAGE.get(city.city),
+            "ndvi_status": city.ndvi_status,
+            "registry_coverage": city.registry_coverage or CITY_LST_COVERAGE.get(city.city),
             "reason": city.reason,
         }
         for city in availability_state.cities
     ]
     st.dataframe(availability_rows, hide_index=True)
+    verified_count = sum(1 for city in availability_state.cities if city.status != "unavailable")
+    unavailable_count = sum(1 for city in availability_state.cities if city.status == "unavailable")
+    shared_count = sum(
+        1 for city in availability_state.cities if city.shared_window_status == "verified"
+    )
+    metric_cols = st.columns(3)
+    metric_cols[0].metric("Cities with verified LST", verified_count)
+    metric_cols[1].metric("Shared-window LST cities", shared_count)
+    metric_cols[2].metric("Unavailable LST cities", unavailable_count)
     availability_map = px.scatter_geo(
         availability_map_rows(availability_state.cities),
         lat="latitude",
         lon="longitude",
-        color="availability",
+        color="lst_availability",
         hover_name="city",
         hover_data={
             "shared_window": True,
+            "ndvi_availability": True,
             "period_start": True,
             "period_end": True,
             "mean_celsius": True,
@@ -84,7 +96,7 @@ elif availability_state.cities:
             "longitude": False,
         },
         projection="natural earth",
-        title="Verified LST expansion cities (availability states, not synthetic fixtures)",
+        title="Six verified cities — LST availability (not synthetic fixtures)",
     )
     st.plotly_chart(availability_map, width="stretch")
 if verified_caches:

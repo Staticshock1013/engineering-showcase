@@ -13,17 +13,18 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .cache import load_verified_cache_registry
-from .nasa import LST_EXPANSION_CITIES, City
-from .registry import VERIFIED_DATA_REGISTRY
+from .nasa import VERIFIED_LST_CITIES, City
+from .registry import CITY_LST_COVERAGE, VERIFIED_DATA_REGISTRY
 
 AVAILABILITY_DIRECTORY = Path(__file__).parent / "availability"
 PREFERRED_SHARED_WINDOW = ("2024-06-25", "2024-07-02")
 LST_PRODUCT_KEY = "mod11a2_v061_daytime_lst"
+NDVI_PRODUCT_KEY = "mod13a2_v061_ndvi"
 
 
 @dataclass(frozen=True)
 class CityAvailability:
-    """One expansion city's verified or unavailable LST state for dashboard/map display."""
+    """One verified city's LST (and optional NDVI) state for dashboard/map display."""
 
     city: str
     status: str
@@ -39,6 +40,9 @@ class CityAvailability:
     mean_celsius: float | None
     valid_pixel_count: int | None
     selected_pixel_count: int | None
+    ndvi_status: str = "unavailable"
+    ndvi_cache_path: str | None = None
+    registry_coverage: str | None = None
 
 
 def _bbox_center(bounding_box: tuple[float, float, float, float]) -> tuple[float, float]:
@@ -67,10 +71,12 @@ def _load_unavailable_markers(directory: Path) -> dict[str, dict[str, Any]]:
     return markers
 
 
-def _lst_caches_by_city(caches: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+def _caches_by_city(
+    caches: list[dict[str, Any]], product_key: str
+) -> dict[str, list[dict[str, Any]]]:
     grouped: dict[str, list[dict[str, Any]]] = {}
     for cache in caches:
-        if cache.get("data_product_key") != LST_PRODUCT_KEY:
+        if cache.get("data_product_key") != product_key:
             continue
         city = cache["composite"]["city"]
         grouped.setdefault(city, []).append(cache)
@@ -91,23 +97,34 @@ def _shared_window_cache(caches: list[dict[str, Any]]) -> dict[str, Any] | None:
     return None
 
 
+def _ndvi_status_for_city(caches: list[dict[str, Any]]) -> tuple[str, str | None]:
+    if not caches:
+        return "unavailable", None
+    selected = caches[-1]
+    return "verified_period", selected.get("cache_path")
+
+
 def build_lst_city_availability(
-    expansion_cities: tuple[City, ...] = LST_EXPANSION_CITIES,
+    cities: tuple[City, ...] = VERIFIED_LST_CITIES,
     *,
     cache_loader: Callable[[], list[dict[str, Any]]] = load_verified_cache_registry,
     availability_directory: Path = AVAILABILITY_DIRECTORY,
 ) -> list[CityAvailability]:
-    """Combine target cities, verified LST caches, and unavailable shared-window markers."""
+    """Combine all six verified cities, LST caches, NDVI period flags, and unavailable markers."""
     if LST_PRODUCT_KEY not in VERIFIED_DATA_REGISTRY:
         raise ValueError("MOD11A2 daytime LST product is missing from the verified registry.")
-    caches_by_city = _lst_caches_by_city(cache_loader())
+    all_caches = cache_loader()
+    caches_by_city = _caches_by_city(all_caches, LST_PRODUCT_KEY)
+    ndvi_by_city = _caches_by_city(all_caches, NDVI_PRODUCT_KEY)
     unavailable = _load_unavailable_markers(availability_directory)
     rows: list[CityAvailability] = []
-    for city in expansion_cities:
+    for city in cities:
         latitude, longitude = _bbox_center(city.bounding_box)
         city_caches = caches_by_city.get(city.name, [])
         shared = _shared_window_cache(city_caches)
         marker = unavailable.get(city.name)
+        ndvi_status, ndvi_path = _ndvi_status_for_city(ndvi_by_city.get(city.name, []))
+        coverage = CITY_LST_COVERAGE.get(city.name)
         if shared:
             composite = shared["composite"]
             rows.append(
@@ -126,6 +143,9 @@ def build_lst_city_availability(
                     mean_celsius=composite.get("mean_celsius"),
                     valid_pixel_count=composite.get("valid_pixel_count"),
                     selected_pixel_count=composite.get("selected_pixel_count"),
+                    ndvi_status=ndvi_status,
+                    ndvi_cache_path=ndvi_path,
+                    registry_coverage=coverage,
                 )
             )
             continue
@@ -133,10 +153,7 @@ def build_lst_city_availability(
             # Prefer disclosing an alternate verified period when the shared window failed.
             selected = city_caches[-1]
             composite = selected["composite"]
-            reason = None
-            shared_status = "unavailable"
-            if marker:
-                reason = marker.get("reason")
+            reason = marker.get("reason") if marker else None
             rows.append(
                 CityAvailability(
                     city=city.name,
@@ -145,7 +162,7 @@ def build_lst_city_availability(
                     longitude=longitude,
                     bounding_box=city.bounding_box,
                     product_key=LST_PRODUCT_KEY,
-                    shared_window_status=shared_status,
+                    shared_window_status="unavailable",
                     period_start=composite["time_start"],
                     period_end=composite["time_end"],
                     cache_path=selected.get("cache_path"),
@@ -153,6 +170,9 @@ def build_lst_city_availability(
                     mean_celsius=composite.get("mean_celsius"),
                     valid_pixel_count=composite.get("valid_pixel_count"),
                     selected_pixel_count=composite.get("selected_pixel_count"),
+                    ndvi_status=ndvi_status,
+                    ndvi_cache_path=ndvi_path,
+                    registry_coverage=coverage,
                 )
             )
             continue
@@ -173,6 +193,9 @@ def build_lst_city_availability(
                     mean_celsius=None,
                     valid_pixel_count=None,
                     selected_pixel_count=None,
+                    ndvi_status=ndvi_status,
+                    ndvi_cache_path=ndvi_path,
+                    registry_coverage=coverage,
                 )
             )
             continue
@@ -188,10 +211,13 @@ def build_lst_city_availability(
                 period_start=PREFERRED_SHARED_WINDOW[0],
                 period_end=PREFERRED_SHARED_WINDOW[1],
                 cache_path=None,
-                reason="No verified cache or unavailable marker exists for this expansion city.",
+                reason="No verified cache or unavailable marker exists for this city.",
                 mean_celsius=None,
                 valid_pixel_count=None,
                 selected_pixel_count=None,
+                ndvi_status=ndvi_status,
+                ndvi_cache_path=ndvi_path,
+                registry_coverage=coverage,
             )
         )
     return rows
@@ -206,8 +232,9 @@ def availability_map_rows(states: list[CityAvailability]) -> list[dict[str, Any]
                 "city": state.city,
                 "latitude": state.latitude,
                 "longitude": state.longitude,
-                "availability": state.status,
+                "lst_availability": state.status,
                 "shared_window": state.shared_window_status,
+                "ndvi_availability": state.ndvi_status,
                 "period_start": state.period_start,
                 "period_end": state.period_end,
                 "mean_celsius": state.mean_celsius,

@@ -10,6 +10,7 @@ from terratrend.nasa import (
     LONDON,
     LST_EXPANSION_CITIES,
     LiveDataUnavailableError,
+    VERIFIED_LST_CITIES,
     MOD11A2_V061,
     MUMBAI,
     NEW_YORK_CITY,
@@ -46,6 +47,8 @@ def test_expansion_city_bounds_are_explicit_tile_contained_windows():
     assert MUMBAI.bounding_box == (72.80, 18.90, 73.00, 19.10)
     assert SAO_PAULO.bounding_box == (-46.75, -23.65, -46.50, -23.45)
     assert LST_EXPANSION_CITIES == (LAGOS, TOKYO, MUMBAI, SAO_PAULO)
+    assert len(VERIFIED_LST_CITIES) == 6
+    assert VERIFIED_LST_CITIES[-1] == SAO_PAULO
 
 
 def test_catalog_adapter_returns_metadata_provenance_without_observations():

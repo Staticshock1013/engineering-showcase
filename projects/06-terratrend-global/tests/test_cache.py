@@ -43,7 +43,7 @@ def test_verified_cache_registry_rejects_unregistered_status(tmp_path):
 def test_packaged_expansion_city_caches_match_registry():
     entries = load_verified_cache_registry()
     cities = {entry["composite"]["city"] for entry in entries}
-    assert {"Lagos", "Tokyo", "Mumbai", "São Paulo"}.issubset(cities)
+    assert {"Lagos", "Tokyo", "Mumbai", "São Paulo", "New York City", "London"}.issubset(cities)
     lst_entries = [
         entry for entry in entries if entry["data_product_key"] == "mod11a2_v061_daytime_lst"
     ]
@@ -51,3 +51,9 @@ def test_packaged_expansion_city_caches_match_registry():
         entry["data_status"] == "verified_real_mod11a2_8_day_composite_not_annual"
         for entry in lst_entries
     )
+    ndvi_cities = {
+        entry["composite"]["city"]
+        for entry in entries
+        if entry["data_product_key"] == "mod13a2_v061_ndvi"
+    }
+    assert {"New York City", "São Paulo"}.issubset(ndvi_cities)

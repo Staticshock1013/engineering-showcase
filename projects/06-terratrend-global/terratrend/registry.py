@@ -76,13 +76,21 @@ VERIFIED_DATA_REGISTRY = {
     ),
 }
 
-# Expansion-city LST coverage is tracked separately from synthetic global fixtures.
-# Preferred shared window: 2024-06-25 through 2024-07-02 when a single MODIS tile fully
-# covers the sampling bbox. Cities that fail that window are marked unavailable for it
-# and may retain a different verified period without forcing cross-city comparability.
-LST_EXPANSION_COVERAGE = {
+# Verified-city LST coverage for all six dashboard cities. Preferred shared window:
+# 2024-06-25 through 2024-07-02 when a single MODIS tile fully covers the sampling bbox.
+# Cities that fail that window are marked unavailable for it and may retain a different
+# verified period without forcing cross-city comparability or city-wide/annual claims.
+CITY_LST_COVERAGE = {
+    "New York City": "verified_shared_window",
+    "London": "verified_shared_window",
     "Lagos": "verified_alternate_period_shared_window_unavailable",
     "Tokyo": "verified_alternate_period_shared_window_unavailable",
     "Mumbai": "verified_alternate_period_shared_window_unavailable",
     "São Paulo": "verified_shared_window",
+}
+# Backward-compatible alias used by earlier expansion-city wiring.
+LST_EXPANSION_COVERAGE = {
+    city: status
+    for city, status in CITY_LST_COVERAGE.items()
+    if city in {"Lagos", "Tokyo", "Mumbai", "São Paulo"}
 }
