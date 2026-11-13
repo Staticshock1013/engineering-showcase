@@ -1,4 +1,3 @@
-import copy
 import csv
 from io import StringIO
 
@@ -21,8 +20,17 @@ def _caches():
 
 def test_city_comparison_refuses_different_composite_periods():
     lst, _ = _caches()
+    incompatible_pair = [
+        next(entry for entry in lst if entry["composite"]["city"] == "London"),
+        next(
+            entry
+            for entry in lst
+            if entry["composite"]["city"] == "New York City"
+            and entry["composite"]["time_start"].startswith("2024-01-01")
+        ),
+    ]
 
-    comparison = compare_verified_cities(lst)
+    comparison = compare_verified_cities(incompatible_pair)
 
     assert not comparison.compatible
     assert "same composite period" in comparison.reason
@@ -39,11 +47,14 @@ def test_city_comparison_refuses_different_products():
 
 def test_city_comparison_allows_matching_verified_metadata():
     lst, _ = _caches()
-    matching_london = copy.deepcopy(lst[1])
-    matching_london["composite"]["time_start"] = lst[0]["composite"]["time_start"]
-    matching_london["composite"]["time_end"] = lst[0]["composite"]["time_end"]
+    matching_period = [
+        entry
+        for entry in lst
+        if entry["composite"]["time_start"].startswith("2024-06-25")
+        and entry["composite"]["time_end"].startswith("2024-07-02")
+    ]
 
-    comparison = compare_verified_cities([lst[0], matching_london])
+    comparison = compare_verified_cities(matching_period)
 
     assert comparison.compatible
     assert {row["city"] for row in comparison.rows} == {"London", "New York City"}

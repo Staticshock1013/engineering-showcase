@@ -8,11 +8,16 @@ observation data.
 
 ## Verified MOD11A2 samples
 
-The processed cache contains two independently authenticated Terra MODIS `MOD11A2` v061 daytime
+The processed cache contains three independently authenticated Terra MODIS `MOD11A2` v061 daytime
 eight-day samples:
 
 - New York City: `MOD11A2.A2024001.h12v04.061.2024011195232`, 2024-01-01 to 2024-01-08.
 - London: `MOD11A2.A2024177.h17v03.061.2024186042347`, 2024-06-25 to 2024-07-02.
+- New York City: `MOD11A2.A2024177.h12v04.061.2024186041340`, 2024-06-25 to 2024-07-02.
+
+The final two samples have the same product, exact period, QC rule, and spatial-sampling method,
+so they are eligible for the dashboard's verified period-level city comparison. That comparison
+does not make an annual or trend claim.
 
 Each `terratrend/processed/*.json` file records its CMR concept ID, provider, query URL, protected
 data URL, temporal extent, product documentation URL, processing rule, and pixel counts. The

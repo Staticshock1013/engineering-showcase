@@ -1,7 +1,7 @@
 # Limitations
 
 - The global dashboard charts are synthetic fixture visualizations, not real global indicators.
-- Verified real-data caches cover two city-level eight-day MOD11A2 periods and one city-level
+- Verified real-data caches cover three city-level eight-day MOD11A2 periods and one city-level
   16-day MOD13A2 NDVI period. They are neither annual measurements nor a multiyear time series.
 - MOD11A2 is daytime land-surface temperature, not near-surface air temperature. Its selected
   QC criteria and city bounding-box mean are implementation choices recorded in provenance.

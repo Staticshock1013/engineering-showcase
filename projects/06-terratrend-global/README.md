@@ -114,8 +114,10 @@ methodology.
 A city comparison is enabled only when exactly two verified caches have the same product/variable,
 unit, aggregation status, exact time interval, and QC/spatial-sampling method. Different products,
 different periods, synthetic fixtures, and incomplete/non-annual data are refused rather than
-shown as a misleading city difference. The current New York City and London LST samples have
-different periods, so the dashboard correctly refuses their comparison.
+shown as a misleading city difference. The January New York City LST sample and the June London
+sample remain incompatible, but a separately validated New York City cache for 2024-06-25 through
+2024-07-02 now matches the London period and is eligible for a period-level LST comparison. It is
+not an annual or trend comparison.
 
 ## Safe batch ingestion
 
