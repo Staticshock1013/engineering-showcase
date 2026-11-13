@@ -1,11 +1,12 @@
-# TerraTrend Global — Phase 1–2 foundation
+# TerraTrend Global — Phase 2 validated sample
 
 TerraTrend Global is a small, transparent MVP for exploring how a global environmental-change
 dashboard can organize indicators, display regional context, and calculate repeatable summaries.
 
-> **Data status:** every value shipped in Phase 1 is a labeled deterministic synthetic fixture.
-> It is not real Earth observation data, is not derived from NASA products, and is unsuitable for
-> scientific, policy, or operational decisions.
+> **Data status:** the global dashboard charts are labeled deterministic synthetic fixtures and are
+> unsuitable for scientific, policy, or operational decisions. A separate, cached MOD11A2 v6.1
+> New York City eight-day sample is processed from authenticated source data with its provenance.
+> It is not a global, annual, or decision-ready result.
 
 ## What is included
 
@@ -14,7 +15,8 @@ dashboard can organize indicators, display regional context, and calculate repea
 - A reusable, dependency-free statistics module for descriptive and regional summaries.
 - A Streamlit dashboard with indicator selection, global map, regional comparison, and provenance
   disclosure.
-- Deterministic pytest coverage for data labeling, empty inputs, numerical summaries, and grouping.
+- A validated HDF4 MOD11A2 decoder with documented scaling, QC filtering, sinusoidal spatial
+  sampling, a duration-weighted annual aggregation function, and deterministic tests.
 
 ## Architecture
 
@@ -25,8 +27,10 @@ flowchart LR
   V --> S[Statistics module]
   V --> D[Streamlit dashboard]
   S --> D
-  C[NASA CMR metadata] --> P[Provenance adapter]
-  P -. no observations .-> D
+  C[NASA CMR metadata] --> P[Authenticated HDF4 retrieval]
+  P --> H[Validated MOD11A2 processor]
+  H --> O[Credential-free cached output and provenance]
+  O --> D
 ```
 
 ## Run locally
@@ -48,48 +52,29 @@ cd projects/06-terratrend-global
 python -m pytest
 ```
 
-## NASA access workflow investigation
+## NASA MOD11A2 verified sample
 
-On 2026-11-13, a request to the official NASA Common Metadata Repository (CMR) catalog endpoint
-returned one matching collection for `short_name=MOD13Q1`:
-
-```text
-https://cmr.earthdata.nasa.gov/search/collections.json?short_name=MOD13Q1&page_size=1
-```
-
-The returned collection identifier was `C1748066515-LPCLOUD`. This verifies only that the public
-catalog endpoint was reachable from the development environment at that time. It does **not**
-verify Earthdata Login authorization, protected data-download access, API rate limits, product
-selection, or a working production ingestion pipeline. No NASA credentials were requested,
-stored, or used, and this MVP does not fetch live NASA data.
-
-### Phase 2 verification: MOD11A2 for New York City
-
-The preferred candidate is Terra MODIS `MOD11A2` version `061`, an 8-day land-surface-temperature
-product. On 2026-11-13, the public CMR UMM-JSON granule query below returned four matches; its
-first result was `MOD11A2.A2024001.h12v04.061.2024011195232`
+Terra MODIS `MOD11A2` version `061` is an eight-day, 1200×1200 (nominal 1 km) sinusoidal
+land-surface-temperature product. An authenticated retrieval processed
+`MOD11A2.A2024001.h12v04.061.2024011195232`
 (`G2834222407-LPCLOUD`, provider `LPCLOUD`) for a New York City bounding box and January 2024:
 
 ```text
 https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=MOD11A2&version=061&bounding_box=-74.10,40.60,-73.70,40.90&temporal=2024-01-01T00:00:00Z,2024-02-01T00:00:00Z&page_size=1
 ```
 
-CMR identifies the HDF download as an `lp-prod-protected` URL. An unauthenticated request to the
-official Earthdata profile endpoint redirected to sign-in. No `EARTHDATA_TOKEN` (or other
-Earthdata credential configuration) was available, so **no protected data request was made**.
+The decoder validates the retrieved file metadata against the [official MOD11 User Guide
+v6.1](https://lpdaac.usgs.gov/documents/715/MOD11_User_Guide_V61.pdf): `LST_Day_1km` must be
+Kelvin, have valid range 7500–65535, fill value 0, scale factor 0.02, and offset 0. It accepts
+only `QC_Day` pixels with mandatory QA bits 0–1 equal to `00` (good quality) and LST error bits
+6–7 no greater than `01` (≤2 K). Pixel centers are transformed from the documented MODIS
+sinusoidal tile grid and sampled only inside the stated bounding box.
 
-`terratrend.nasa` implements a public-metadata adapter that:
-
-1. builds an explicit city/time/product CMR query;
-2. validates the returned product/version and captures the catalog concept ID, provider, temporal
-   coverage, declared data URL, and exact query URL in `GranuleProvenance`;
-3. refuses protected download when `EARTHDATA_TOKEN` is absent; and
-4. refuses to decode HDF data or return observations in all cases.
-
-The module records candidate MOD11A2 scaling, QA, and 8-day compositing expectations only as
-requirements for a future ingestion implementation. They were **not** verified against an
-authorized downloaded granule, no QC filtering or temporal aggregation was performed, and no real
-observation has been saved or displayed.
+`terratrend/processed/mod11a2_nyc_2024-01-01.json` is a credential-free cached result with CMR
+provenance, source URL, processing rules, and counts. No token is stored in source or output.
+`annual_mean_celsius` is duration-weighted so a shorter final composite does not receive an
+eight-day weight. It remains a reusable function rather than a claimed annual result: this cache
+contains one eight-day composite only.
 
 ## Known limitations
 
@@ -97,13 +82,11 @@ observation has been saved or displayed.
 - Two fixture months support UI prototyping only; they do not establish trends.
 - Values are simple anomalies with no uncertainty, quality flags, temporal aggregation, or
   scientific baseline provenance.
-- The Phase 2 metadata adapter does not download HDF files, decode MODIS QA flags, aggregate
-  pixels, or create real observations.
-- The map is still exclusively driven by synthetic fixtures; it intentionally ignores NASA catalog
-  metadata.
+- The verified source is one New York City eight-day composite; the global map remains synthetic.
+- A real annual result requires complete, validated coverage for each year and is not shipped.
 
 ## Next steps
 
-1. Select authoritative products and document their spatial, temporal, and quality semantics.
-2. Implement credential-safe, rate-aware ingestion after confirming authorized access.
-3. Add provenance, uncertainty, quality flags, and tests around transformation rules.
+1. Retrieve all annual MOD11A2 composites with retry/rate-limit handling and coverage checks.
+2. Add uncertainty and coverage reporting appropriate to each downstream use.
+3. Expand geographic validation beyond the single cached city sample.
