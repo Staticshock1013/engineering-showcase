@@ -8,6 +8,15 @@ dashboard can organize indicators, display regional context, and calculate repea
 > land-surface-temperature samples and one MOD13A2 v6.1 NDVI sample are processed from
 > authenticated source data with provenance. None is a global, annual, or decision-ready result.
 
+## Problem and approach
+
+Environmental-change dashboards often blur prototype values, catalog metadata, and validated
+observations. TerraTrend keeps them separate: synthetic fixtures support global interface
+prototyping; authenticated MODIS caches retain product/QC/provenance evidence; and city histories
+are labeled fixed-season unless complete annual coverage exists.
+
+**Technologies:** Python 3.12, Streamlit, Plotly, NumPy, SciPy, PyHDF, NASA CMR/Earthdata.
+
 ## What is included
 
 - A typed global indicator registry for surface temperature, vegetation, and precipitation anomalies.
@@ -39,17 +48,14 @@ Python 3.12+ is recommended.
 
 ```bash
 cd projects/06-terratrend-global
-python3 -m venv .venv
-. .venv/bin/activate
-python -m pip install -r requirements.txt
-streamlit run app.py
+./run-local.sh
 ```
 
 ## Test
 
 ```bash
 cd projects/06-terratrend-global
-python -m pytest
+./test.sh
 ```
 
 ## Phase 3/5 readiness documents
@@ -58,6 +64,17 @@ python -m pytest
 - [Methodology](docs/methodology.md)
 - [Data sources and provenance](docs/data-sources.md)
 - [Limitations](docs/limitations.md)
+- [Requirements audit](docs/requirements-audit.md)
+- [Final run instructions](docs/final-run.md)
+- [2–3 minute demo walkthrough](docs/demo-walkthrough.md)
+
+## Technical challenges solved
+
+- Securely discovered and retrieved protected NASA granules without storing credentials.
+- Verified in-file product metadata, QC flags, scale conventions, and sinusoidal city sampling.
+- Prevented invalid city comparisons through explicit product, unit, period, QC, and sampling gates.
+- Built bounded, resumable fixed-season ingestion that refuses annual claims without complete annual
+  coverage and trend claims without enough qualifying periods.
 
 ## NASA MOD11A2 verified sample
 

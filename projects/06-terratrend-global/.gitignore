@@ -1,3 +1,4 @@
 .terratrend-cache/
+.terratrend-deps/
 terratrend/series/**/raw/
 __pycache__/
