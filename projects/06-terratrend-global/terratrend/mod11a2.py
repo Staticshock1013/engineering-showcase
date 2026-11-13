@@ -18,6 +18,7 @@ from typing import Any
 import numpy as np
 
 from .nasa import City, GranuleProvenance, MOD11A2_V061
+from .registry import VERIFIED_DATA_REGISTRY
 
 EARTH_RADIUS_METERS = 6_371_007.181
 MODIS_TILE_WIDTH_METERS = 1_111_950.5196666666
@@ -193,7 +194,8 @@ def save_processed_composite(
     """Write credential-free processed data and reproducible provenance outside fixtures."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
-        "data_status": "verified_real_mod11a2_8_day_composite_not_annual",
+        "data_product_key": "mod11a2_v061_daytime_lst",
+        "data_status": VERIFIED_DATA_REGISTRY["mod11a2_v061_daytime_lst"].data_status,
         "product_documentation": USER_GUIDE_URL,
         "processing": {
             "source_variable": MOD11A2_V061.source_variable,

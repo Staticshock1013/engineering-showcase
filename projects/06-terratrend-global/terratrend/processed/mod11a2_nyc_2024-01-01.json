@@ -16,6 +16,7 @@
     "time_start": "2024-01-01T00:00:00.000Z",
     "valid_pixel_count": 20
   },
+  "data_product_key": "mod11a2_v061_daytime_lst",
   "data_status": "verified_real_mod11a2_8_day_composite_not_annual",
   "processing": {
     "offset_celsius": -273.15,

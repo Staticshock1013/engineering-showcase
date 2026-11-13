@@ -1,16 +1,12 @@
 """Streamlit entry point for the TerraTrend Global Phase 1 MVP."""
 
-from pathlib import Path
-
 import plotly.express as px
 import streamlit as st
 
+from terratrend.cache import load_verified_cache_registry
 from terratrend.data import load_observations
-from terratrend.mod11a2 import load_processed_composite
 from terratrend.registry import INDICATOR_REGISTRY
 from terratrend.statistics import indicator_summary, regional_means
-
-PROCESSED_SAMPLE_PATH = Path(__file__).parent / "terratrend" / "processed" / "mod11a2_nyc_2024-01-01.json"
 
 st.set_page_config(page_title="TerraTrend Global", page_icon="🌍", layout="wide")
 st.title("TerraTrend Global")
@@ -20,12 +16,20 @@ st.warning(
     "and must not be used for scientific or operational decisions."
 )
 
-if PROCESSED_SAMPLE_PATH.exists():
-    processed = load_processed_composite(PROCESSED_SAMPLE_PATH)
+verified_caches = load_verified_cache_registry()
+if verified_caches:
+    processed = st.selectbox(
+        "Verified processed MOD11A2 cache",
+        verified_caches,
+        format_func=lambda item: (
+            f"{item['composite']['city']} — {item['composite']['time_start'][:10]} "
+            f"to {item['composite']['time_end'][:10]}"
+        ),
+    )
     composite = processed["composite"]
     st.info(
-        "Verified real-data state: a locally processed MOD11A2 v6.1 daytime 8-day composite "
-        "for New York City. This cache is not an annual or global result."
+        "Verified real-data state: the selected MOD11A2 v6.1 daytime 8-day composite is "
+        "locally processed and registry-validated. It is not an annual or global result."
     )
     verified_columns = st.columns(3)
     verified_columns[0].metric("Verified sample mean (°C)", composite["mean_celsius"])

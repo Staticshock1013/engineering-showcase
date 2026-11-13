@@ -6,6 +6,7 @@ import pytest
 
 from terratrend.nasa import (
     AuthenticationRequiredError,
+    LONDON,
     LiveDataUnavailableError,
     MOD11A2_V061,
     NEW_YORK_CITY,
@@ -27,6 +28,11 @@ def test_mod11a2_query_is_reproducible_for_new_york_city():
     assert parameters["bounding_box"] == ["-74.1,40.6,-73.7,40.9"]
     assert parameters["temporal"] == ["2024-01-01T00:00:00Z,2024-02-01T00:00:00Z"]
     assert MOD11A2_V061.raw_to_celsius(15000) == pytest.approx(26.85)
+
+
+def test_london_city_bounds_are_explicit_for_reproducible_sampling():
+    assert LONDON.name == "London"
+    assert LONDON.bounding_box == (-0.35, 51.30, 0.20, 51.70)
 
 
 def test_catalog_adapter_returns_metadata_provenance_without_observations():

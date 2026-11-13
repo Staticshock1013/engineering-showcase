@@ -44,6 +44,7 @@ class City:
 
 
 NEW_YORK_CITY = City("New York City", (-74.10, 40.60, -73.70, 40.90))
+LONDON = City("London", (-0.35, 51.30, 0.20, 51.70))
 
 
 @dataclass(frozen=True)
