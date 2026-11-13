@@ -180,6 +180,11 @@
       "year": 2024
     }
   ],
+  "processing": {
+    "product_documentation": "https://lpdaac.usgs.gov/documents/621/MOD13_User_Guide_V61.pdf",
+    "qc_rule": "detailed_vi_quality_bits_0_1=00 and pixel_reliability=0",
+    "spatial_sampling": "MODIS sinusoidal pixel centers inside the complete stated bounding box"
+  },
   "product": {
     "short_name": "MOD13A2",
     "version": "061"

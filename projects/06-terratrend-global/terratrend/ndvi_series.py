@@ -14,8 +14,13 @@ import time
 from typing import Any, Callable, Iterable
 from urllib.request import Request, urlopen
 
-from .mod13a2 import process_hdf4_ndvi_composite, save_processed_ndvi_composite
-from .nasa import MOD13A2_V061, NEW_YORK_CITY, GranuleProvenance, protected_download_headers, search_granule_metadata
+from .mod13a2 import (
+    QC_RULE,
+    PRODUCT_DOCUMENTATION_URL,
+    process_hdf4_ndvi_composite,
+    save_processed_ndvi_composite,
+)
+from .nasa import City, MOD13A2_V061, NEW_YORK_CITY, GranuleProvenance, protected_download_headers, search_granule_metadata
 from .statistics import linear_trend
 
 FIXED_SEASON_STATUS = "verified_fixed_season_ndvi_not_annual"
@@ -52,8 +57,14 @@ def build_fixed_season_plan(
     return tuple(plan)
 
 
-def _period_path(cache_directory: Path, period: FixedSeasonPeriod) -> Path:
-    return cache_directory / "periods" / f"mod13a2_nyc_{period.start}.json"
+def _city_slug(city: City) -> str:
+    if city.name == NEW_YORK_CITY.name:
+        return "nyc"
+    return city.name.lower().replace(" ", "-").replace("(", "").replace(")", "")
+
+
+def _period_path(cache_directory: Path, city: City, period: FixedSeasonPeriod) -> Path:
+    return cache_directory / "periods" / f"mod13a2_{_city_slug(city)}_{period.start}.json"
 
 
 def _download_granule(provenance: GranuleProvenance, destination: Path) -> None:
@@ -131,6 +142,7 @@ def execute_fixed_season_series(
     cache_directory: Path,
     years: Iterable[int] = range(2010, 2025),
     *,
+    city: City = NEW_YORK_CITY,
     composite_doy: int = DEFAULT_COMPOSITE_DOY,
     dry_run: bool = True,
     max_downloads: int = 1,
@@ -152,7 +164,7 @@ def execute_fixed_season_series(
         manifest = {
             "schema_version": 1,
             "series_status": "planned_fixed_season_ndvi_no_network",
-            "city": asdict(NEW_YORK_CITY),
+            "city": asdict(city),
             "composite_day_of_year": composite_doy,
             "periods": [{**asdict(period), "status": "planned_no_network"} for period in plan],
             "trend": {"status": "refused_no_observations"},
@@ -160,13 +172,13 @@ def execute_fixed_season_series(
         manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         return manifest
 
-    pending = [period for period in plan if not _period_path(cache_directory, period).exists()]
+    pending = [period for period in plan if not _period_path(cache_directory, city, period).exists()]
     if len(pending) > max_downloads:
         raise FixedSeasonIngestionError(
             f"Plan has {len(pending)} pending periods, exceeding explicit max_downloads={max_downloads}."
         )
     lookup = metadata_lookup or (
-        lambda start, end: search_granule_metadata(MOD13A2_V061, NEW_YORK_CITY, start, end + timedelta(days=1))
+        lambda start, end: search_granule_metadata(MOD13A2_V061, city, start, end + timedelta(days=1))
     )
     raw_directory = cache_directory / "raw"
     for index, period in enumerate(pending):
@@ -180,21 +192,30 @@ def execute_fixed_season_series(
         raw_path = raw_directory / f"{provenance.granule_ur}.hdf"
         if not raw_path.exists():
             downloader(provenance, raw_path)
-        composite = process_hdf4_ndvi_composite(raw_path, provenance, NEW_YORK_CITY)
-        save_processed_ndvi_composite(_period_path(cache_directory, period), composite, provenance)
+        composite = process_hdf4_ndvi_composite(raw_path, provenance, city)
+        save_processed_ndvi_composite(_period_path(cache_directory, city, period), composite, provenance)
 
-    payloads = [_load_period(_period_path(cache_directory, period)) for period in plan if _period_path(cache_directory, period).exists()]
+    payloads = [
+        _load_period(_period_path(cache_directory, city, period))
+        for period in plan
+        if _period_path(cache_directory, city, period).exists()
+    ]
     assessment = evaluate_fixed_season_series(
         payloads, minimum_valid_pixel_fraction=minimum_valid_pixel_fraction
     )
     manifest = {
         "schema_version": 1,
-        "city": asdict(NEW_YORK_CITY),
+        "city": asdict(city),
         "product": {"short_name": "MOD13A2", "version": "061"},
         "series_status": FIXED_SEASON_STATUS,
         "composite_day_of_year": composite_doy,
         "period_definition": "One 16-day MOD13A2 composite beginning on DOY 177 each year.",
         "period_cache_directory": "periods",
+        "processing": {
+            "qc_rule": QC_RULE,
+            "spatial_sampling": "MODIS sinusoidal pixel centers inside the complete stated bounding box",
+            "product_documentation": PRODUCT_DOCUMENTATION_URL,
+        },
         **assessment,
     }
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")

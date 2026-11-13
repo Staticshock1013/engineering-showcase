@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 from dataclasses import dataclass
 from io import StringIO
+import json
 from typing import Any, Iterable
 
 from .registry import INDICATOR_REGISTRY, VERIFIED_DATA_REGISTRY, IndicatorDefinition
@@ -13,6 +14,15 @@ from .registry import INDICATOR_REGISTRY, VERIFIED_DATA_REGISTRY, IndicatorDefin
 @dataclass(frozen=True)
 class CityComparison:
     """A comparison result that is either explicitly compatible or refused."""
+
+    compatible: bool
+    reason: str
+    rows: tuple[dict[str, Any], ...] = ()
+
+
+@dataclass(frozen=True)
+class SeasonalTrendComparison:
+    """A qualified paired display of compatible fixed-season city trends."""
 
     compatible: bool
     reason: str
@@ -154,3 +164,48 @@ def synthetic_fixture_csv(
         "unit",
     ]
     return _csv_text(rows, fields)
+
+
+def compare_fixed_season_trends(series: Iterable[dict[str, Any]]) -> SeasonalTrendComparison:
+    """Permit a city trend comparison only for methodologically matched seasonal series."""
+    entries = list(series)
+    if len(entries) != 2:
+        return SeasonalTrendComparison(False, "Select exactly two fixed-season city series.")
+    if any(entry.get("series_status") != "verified_fixed_season_ndvi_not_annual" for entry in entries):
+        return SeasonalTrendComparison(False, "Both series must be verified fixed-season NDVI series.")
+    if any(entry.get("trend", {}).get("status") != "verified_fixed_season_ndvi_trend" for entry in entries):
+        return SeasonalTrendComparison(False, "Both series require enough valid observations for trend statistics.")
+    if len(
+        {
+            (entry.get("product", {}).get("short_name"), entry.get("product", {}).get("version"))
+            for entry in entries
+        }
+    ) != 1:
+        return SeasonalTrendComparison(False, "Series require the same product and version.")
+    if len({entry.get("composite_day_of_year") for entry in entries}) != 1:
+        return SeasonalTrendComparison(False, "Series require the same MODIS composite day-of-year.")
+    if len({entry.get("period_definition") for entry in entries}) != 1:
+        return SeasonalTrendComparison(False, "Series require the same fixed-season aggregation definition.")
+    if len({entry.get("minimum_valid_pixel_fraction") for entry in entries}) != 1:
+        return SeasonalTrendComparison(False, "Series require the same valid-pixel coverage threshold.")
+    if len({json.dumps(entry.get("processing", {}), sort_keys=True) for entry in entries}) != 1:
+        return SeasonalTrendComparison(False, "Series require matching QC and spatial-sampling methods.")
+    city_names = [entry.get("city", {}).get("name") for entry in entries]
+    if len(set(city_names)) != 2:
+        return SeasonalTrendComparison(False, "Series require two distinct cities.")
+    rows = tuple(
+        {
+            "city": entry["city"]["name"],
+            "period_years": entry["trend"]["count"],
+            "slope_ndvi_per_year": entry["trend"]["slope_per_year"],
+            "slope_ci_95": f"{entry['trend']['slope_ci_lower']} to {entry['trend']['slope_ci_upper']}",
+            "p_value": entry["trend"]["p_value"],
+            "series_status": "fixed-season only; not annual",
+        }
+        for entry in entries
+    )
+    return SeasonalTrendComparison(
+        True,
+        "Compatible fixed-season trend display; this is not a test of difference between city slopes.",
+        rows,
+    )

@@ -9,6 +9,7 @@ import streamlit as st
 from terratrend.data import load_observations
 from terratrend.dashboard import load_verified_cache_state
 from terratrend.presentation import (
+    compare_fixed_season_trends,
     compare_verified_cities,
     synthetic_fixture_csv,
     verified_cache_csv,
@@ -17,7 +18,10 @@ from terratrend.registry import INDICATOR_REGISTRY, VERIFIED_DATA_REGISTRY
 from terratrend.ndvi_series import load_fixed_season_series
 from terratrend.statistics import indicator_summary, regional_means
 
-NDVI_SERIES_DIRECTORY = Path(__file__).parent / "terratrend" / "series" / "nyc-mod13a2-doy177"
+NDVI_SERIES_DIRECTORIES = (
+    Path(__file__).parent / "terratrend" / "series" / "nyc-mod13a2-doy177",
+    Path(__file__).parent / "terratrend" / "series" / "london-west-tile-mod13a2-doy177",
+)
 
 st.set_page_config(page_title="TerraTrend Global", page_icon="🌍", layout="wide")
 st.title("TerraTrend Global")
@@ -111,15 +115,19 @@ else:
         "prototype is shown."
     )
 
-try:
-    ndvi_series = load_fixed_season_series(NDVI_SERIES_DIRECTORY)
-except (OSError, ValueError, json.JSONDecodeError):
-    ndvi_series = None
-    st.error("Fixed-season NDVI series cache could not be loaded and is not displayed.")
+ndvi_series_list = []
+for series_directory in NDVI_SERIES_DIRECTORIES:
+    try:
+        ndvi_series = load_fixed_season_series(series_directory)
+    except (OSError, ValueError, json.JSONDecodeError):
+        ndvi_series = None
+        st.error("Fixed-season NDVI series cache could not be loaded and is not displayed.")
+    if ndvi_series:
+        ndvi_series_list.append(ndvi_series)
 
-if ndvi_series:
+for ndvi_series in ndvi_series_list:
     trend = ndvi_series["trend"]
-    st.subheader("NYC fixed-season NDVI series (DOY 177)")
+    st.subheader(f"{ndvi_series['city']['name']} fixed-season NDVI series (DOY 177)")
     st.caption(
         "One validated MOD13A2 16-day composite near late June/early July per year (2010–2024). "
         "This is a fixed-season series, not annual NDVI."
@@ -140,6 +148,19 @@ if ndvi_series:
         st.dataframe(ndvi_series["periods"], hide_index=True)
     else:
         st.warning(f"Fixed-season trend refused: {trend['reason']}")
+
+if len(ndvi_series_list) >= 2:
+    seasonal_comparison = compare_fixed_season_trends(ndvi_series_list)
+    if seasonal_comparison.compatible:
+        st.subheader("Qualified NYC/London fixed-season NDVI trend comparison")
+        st.success(seasonal_comparison.reason)
+        st.caption(
+            "The comparison shows independently fitted, method-matched fixed-season trends. "
+            "It does not test a difference between slopes and is not an annual comparison."
+        )
+        st.dataframe(seasonal_comparison.rows, hide_index=True)
+    else:
+        st.warning(f"Fixed-season city trend comparison refused: {seasonal_comparison.reason}")
 
 observations = load_observations()
 indicator_key = st.sidebar.selectbox(

@@ -40,3 +40,9 @@ fraction. The series is rate-limited, resumable, and each period retains its own
 The reusable `statistics.linear_trend` function applies OLS and reports a two-sided 95% slope
 interval and p-value only when at least three periods pass the threshold. These are conditional
 fixed-season statistics—not annual aggregation or causal inference.
+
+London uses a separate tile-contained central/west analysis window (`-0.30, 51.35, -0.05, 51.65`)
+because the broader London bbox crosses MODIS h17/h18. NYC/London trend display additionally
+requires matching product/version, DOY, period definition, QC/spatial method, threshold, and
+eligible trend status. It presents side-by-side estimates only; it does not test a difference
+between slopes.

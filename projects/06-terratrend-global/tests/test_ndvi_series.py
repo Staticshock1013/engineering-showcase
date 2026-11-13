@@ -8,6 +8,7 @@ from terratrend.ndvi_series import (
     evaluate_fixed_season_series,
     execute_fixed_season_series,
 )
+from terratrend.nasa import LONDON_WEST_TILE
 
 
 def _period(year: int, value: float, valid: int = 500, selected: int = 1000) -> dict:
@@ -63,3 +64,9 @@ def test_dry_run_writes_no_network_manifest_and_apply_is_bounded(tmp_path):
 
     with pytest.raises(FixedSeasonIngestionError, match="exceeding"):
         execute_fixed_season_series(tmp_path, [2010, 2011], dry_run=False, max_downloads=1)
+
+
+def test_dry_run_supports_tile_contained_london_analysis_window(tmp_path):
+    manifest = execute_fixed_season_series(tmp_path, [2024], city=LONDON_WEST_TILE, dry_run=True)
+
+    assert manifest["city"]["name"] == "London (west tile)"

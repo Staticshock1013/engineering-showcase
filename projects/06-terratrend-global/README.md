@@ -119,7 +119,7 @@ sample remain incompatible, but a separately validated New York City cache for 2
 2024-07-02 now matches the London period and is eligible for a period-level LST comparison. It is
 not an annual or trend comparison.
 
-## NYC fixed-season NDVI series
+## NYC and London fixed-season NDVI series
 
 `terratrend/series/nyc-mod13a2-doy177/` contains a bounded authenticated MOD13A2 series: one
 16-day composite beginning on day-of-year 177 for each year from 2010 through 2024. Each file has
@@ -130,6 +130,17 @@ The reusable OLS statistics engine reports a fixed-season slope of `0.000256` ND
 `-0.003669` to `0.004181`, p=`0.890085`, n=15). This is displayed only as a descriptive
 fixed-season MOD13A2 result. It is **not** annual NDVI, a general vegetation-health trend, a
 climate-change attribution, or a causal claim.
+
+`terratrend/series/london-west-tile-mod13a2-doy177/` applies the same 2010–2024 DOY-177
+methodology to a tile-contained central/west London analysis window. The full original London bbox
+crosses a MODIS tile boundary and is intentionally not used for the series. Fourteen periods met
+the 10% valid-pixel threshold; 2021 was retained with provenance but rejected from trend fitting
+(9.72% valid pixels). The London fixed-season slope is `-0.000156` NDVI/year (95% CI
+`-0.003220` to `0.002909`, p=`0.913772`, n=14).
+
+The dashboard's NYC/London fixed-season panel compares these qualified, method-matched estimates
+side by side. It is not a test of the difference between slopes, a city-wide London result, or an
+annual comparison.
 
 ## Safe batch ingestion
 

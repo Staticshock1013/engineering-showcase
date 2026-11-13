@@ -40,3 +40,8 @@ The bounded historical fixed-season cache is in `terratrend/series/nyc-mod13a2-d
 manifest records 15 authenticated DOY-177 periods from 2010–2024, their granules, valid-pixel
 fractions, threshold decisions, and fixed-season trend statistics. Each referenced period JSON
 contains the source URL and CMR provenance; credentials are not stored.
+
+The matching London central/west tile-contained series is in
+`terratrend/series/london-west-tile-mod13a2-doy177/`. It contains the same 15 authenticated
+DOY-177 source periods. Its manifest marks the 2021 period rejected for insufficient valid-pixel
+coverage (9.72% against the 10% threshold), retaining the source cache and provenance.

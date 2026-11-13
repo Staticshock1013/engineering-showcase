@@ -4,6 +4,7 @@ from io import StringIO
 from terratrend.cache import load_verified_cache_registry
 from terratrend.data import load_observations
 from terratrend.presentation import (
+    compare_fixed_season_trends,
     compare_verified_cities,
     synthetic_fixture_csv,
     verified_cache_csv,
@@ -82,3 +83,29 @@ def test_synthetic_csv_preserves_synthetic_label_and_methodology():
     assert {row["data_class"] for row in rows} == {"synthetic_fixture"}
     assert {row["data_status"] for row in rows} == {"synthetic_not_real_earth_observation_data"}
     assert all("Deterministic synthetic" in row["methodology"] for row in rows)
+
+
+def test_fixed_season_trend_comparison_requires_matched_methodology():
+    base = {
+        "series_status": "verified_fixed_season_ndvi_not_annual",
+        "product": {"short_name": "MOD13A2", "version": "061"},
+        "composite_day_of_year": 177,
+        "period_definition": "One 16-day MOD13A2 composite beginning on DOY 177 each year.",
+        "minimum_valid_pixel_fraction": 0.1,
+        "processing": {"qc_rule": "strict", "spatial_sampling": "complete bbox"},
+        "trend": {
+            "status": "verified_fixed_season_ndvi_trend",
+            "count": 15,
+            "slope_per_year": 0.001,
+            "slope_ci_lower": -0.001,
+            "slope_ci_upper": 0.003,
+            "p_value": 0.4,
+        },
+    }
+    nyc = {**base, "city": {"name": "New York City"}}
+    london = {**base, "city": {"name": "London (west tile)"}}
+
+    comparison = compare_fixed_season_trends([nyc, london])
+
+    assert comparison.compatible
+    assert len(comparison.rows) == 2

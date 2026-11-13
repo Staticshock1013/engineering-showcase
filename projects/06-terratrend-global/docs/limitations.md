@@ -13,6 +13,9 @@
   coverage. Its OLS slope, confidence interval, and p-value are descriptive fixed-season
   statistics contingent on the selected period, QC threshold, and city bounding box; they do not
   establish an annual trend, causation, or attribution.
+- The London seasonal series covers only a tile-contained central/west analysis window, not the
+  full London bbox, because the latter spans two MODIS tiles. Its qualified comparison with NYC is
+  side-by-side descriptive reporting, not a formal test of city slope differences.
 - Runtime batch caches require a bounded explicit apply action and are not automatically exposed
   in the dashboard.
 - An annual result requires complete contiguous annual coverage; a trend requires at least three

@@ -45,6 +45,9 @@ class City:
 
 NEW_YORK_CITY = City("New York City", (-74.10, 40.60, -73.70, 40.90))
 LONDON = City("London", (-0.35, 51.30, 0.20, 51.70))
+# The original London bbox crosses the MODIS h17/h18 tile boundary. This analysis window
+# is intentionally contained in h17 so each fixed-season period has complete tile coverage.
+LONDON_WEST_TILE = City("London (west tile)", (-0.30, 51.35, -0.05, 51.65))
 
 
 @dataclass(frozen=True)
