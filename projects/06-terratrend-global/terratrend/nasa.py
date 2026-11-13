@@ -79,6 +79,20 @@ MOD11A2_V061 = ProductSpecification(
     ),
 )
 
+MOD13A2_V061 = ProductSpecification(
+    short_name="MOD13A2",
+    version="061",
+    source_variable="1 km 16 days NDVI",
+    quality_variable="1 km 16 days VI Quality",
+    temporal_composite_days=16,
+    scale_factor=0.0001,
+    offset_celsius=0.0,
+    quality_rule=(
+        "Accept pixels only when detailed VI quality bits 0-1 are 00 and "
+        "pixel reliability is 0 (good data)."
+    ),
+)
+
 
 @dataclass(frozen=True)
 class GranuleProvenance:

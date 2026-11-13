@@ -23,3 +23,10 @@ Authoritative product semantics are taken from the [MOD11 User Guide
 v6.1](https://lpdaac.usgs.gov/documents/715/MOD11_User_Guide_V61.pdf). CMR is used for collection
 and granule metadata. The local application does not treat catalog metadata alone as an
 observation.
+
+## Verified MOD13A2 NDVI sample
+
+New York City also has one authenticated `MOD13A2` v061 NDVI cache:
+`MOD13A2.A2024177.h12v04.061.2024195022551`, covering 2024-06-25 to 2024-07-10. Its provenance is
+stored in `terratrend/processed/mod13a2_nyc_2024-06-25.json`. NDVI semantics and QA come from the
+[MOD13 User Guide v6.1](https://lpdaac.usgs.gov/documents/621/MOD13_User_Guide_V61.pdf).

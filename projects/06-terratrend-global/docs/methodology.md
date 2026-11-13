@@ -20,3 +20,12 @@ fewer than three complete annual results cannot produce a trend claim.
 
 Use `python -m terratrend.ingestion --city london --years 2024` to review a no-network plan.
 See the root project README for the bounded one-period apply command.
+
+## MOD13A2 NDVI
+
+The verified NDVI path supports `MOD13A2` Collection 6.1 16-day 1 km composites. It validates
+in-file NDVI range (-2000 to 10000), fill value (-3000), detailed-QA schema, and pixel-reliability
+schema. The product guide publishes a 0.0001 scale; the validated HDF file records the inverse
+divisor 10000, so raw NDVI is divided by 10000. A pixel must have detailed VI-quality bits 0–1
+equal to `00` and pixel reliability `0`. The implementation rejects city bboxes not fully covered
+by the retrieved MODIS tile, preventing a partial tile from being labeled as a city sample.

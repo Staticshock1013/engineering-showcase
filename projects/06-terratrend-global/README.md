@@ -5,8 +5,8 @@ dashboard can organize indicators, display regional context, and calculate repea
 
 > **Data status:** the global dashboard charts are labeled deterministic synthetic fixtures and are
 > unsuitable for scientific, policy, or operational decisions. Separate, cached MOD11A2 v6.1
-> eight-day samples for New York City and London are processed from authenticated source data with
-> provenance. Neither is a global, annual, or decision-ready result.
+> land-surface-temperature samples and one MOD13A2 v6.1 NDVI sample are processed from
+> authenticated source data with provenance. None is a global, annual, or decision-ready result.
 
 ## What is included
 
@@ -88,6 +88,21 @@ provenance, source URL, processing rules, and counts. They are validated against
 eight-day weight, and it rejects incomplete or non-contiguous calendar coverage. It remains a
 reusable function rather than a claimed annual result: each cached result contains one eight-day
 composite only.
+
+## NASA MOD13A2 verified NDVI sample
+
+An authenticated New York City retrieval processed
+`MOD13A2.A2024177.h12v04.061.2024195022551` for 2024-06-25 through 2024-07-10.
+The adapter validates `MOD13A2` v061 catalog metadata, the HDF4 NDVI valid range (-2000 to
+10000), fill value (-3000), and detailed-QA/pixel-reliability schemas against the [official MOD13
+User Guide v6.1](https://lpdaac.usgs.gov/documents/621/MOD13_User_Guide_V61.pdf). The published
+NDVI scale is 0.0001; the retrieved file records its inverse divisor (10000), so accepted raw
+values are divided by 10000 after validation.
+
+Only pixels with detailed VI-quality bits 0–1 equal to `00` and pixel reliability equal to `0`
+(good data) are sampled within the complete New York City bounding box. The period-level,
+credential-free cache is `terratrend/processed/mod13a2_nyc_2024-06-25.json`. It is selectable in
+the dashboard’s verified-data variable control and is not an annual value or trend.
 
 ## Safe batch ingestion
 

@@ -5,7 +5,7 @@ import streamlit as st
 
 from terratrend.data import load_observations
 from terratrend.dashboard import load_verified_cache_state
-from terratrend.registry import INDICATOR_REGISTRY
+from terratrend.registry import INDICATOR_REGISTRY, VERIFIED_DATA_REGISTRY
 from terratrend.statistics import indicator_summary, regional_means
 
 st.set_page_config(page_title="TerraTrend Global", page_icon="🌍", layout="wide")
@@ -25,26 +25,31 @@ if cache_state.status == "unavailable":
     )
 if verified_caches:
     processed = st.selectbox(
-        "Verified processed MOD11A2 cache",
+        "Verified processed data variable",
         verified_caches,
         format_func=lambda item: (
+            f"{VERIFIED_DATA_REGISTRY[item['data_product_key']].variable_name}: "
             f"{item['composite']['city']} — {item['composite']['time_start'][:10]} "
             f"to {item['composite']['time_end'][:10]}"
         ),
     )
     composite = processed["composite"]
+    verified_definition = VERIFIED_DATA_REGISTRY[processed["data_product_key"]]
+    mean_value = composite.get("mean_celsius", composite.get("mean_ndvi"))
     st.info(
-        "Verified real-data state: the selected MOD11A2 v6.1 daytime 8-day composite is "
-        "locally processed and registry-validated. It is not an annual or global result."
+        f"Verified real-data state: the selected {verified_definition.product_short_name} v"
+        f"{verified_definition.version} {verified_definition.temporal_resolution} is locally "
+        "processed and registry-validated. It is not an annual or global result."
     )
     verified_columns = st.columns(3)
-    verified_columns[0].metric("Verified sample mean (°C)", composite["mean_celsius"])
+    verified_columns[0].metric(f"Verified sample mean ({verified_definition.unit})", mean_value)
     verified_columns[1].metric("QC-passing pixels", composite["valid_pixel_count"])
     verified_columns[2].metric("Spatially sampled pixels", composite["selected_pixel_count"])
     with st.expander("Verified MOD11A2 sample provenance"):
         st.json(
             {
                 "data_status": processed["data_status"],
+                "variable": verified_definition.variable_name,
                 "product": processed["provenance"]["product_short_name"],
                 "version": processed["provenance"]["product_version"],
                 "provider": processed["provenance"]["provider"],

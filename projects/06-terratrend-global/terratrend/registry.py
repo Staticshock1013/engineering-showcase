@@ -24,6 +24,8 @@ class VerifiedDataDefinition:
     version: str
     temporal_resolution: str
     data_status: str
+    variable_name: str
+    unit: str
 
 
 INDICATOR_REGISTRY = {
@@ -60,5 +62,16 @@ VERIFIED_DATA_REGISTRY = {
         version="061",
         temporal_resolution="8-day composite",
         data_status="verified_real_mod11a2_8_day_composite_not_annual",
+        variable_name="Daytime land-surface temperature",
+        unit="°C",
+    ),
+    "mod13a2_v061_ndvi": VerifiedDataDefinition(
+        key="mod13a2_v061_ndvi",
+        product_short_name="MOD13A2",
+        version="061",
+        temporal_resolution="16-day composite",
+        data_status="verified_real_mod13a2_16_day_composite_not_annual",
+        variable_name="Normalized Difference Vegetation Index",
+        unit="NDVI",
     )
 }
