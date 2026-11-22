@@ -19,7 +19,7 @@ Path in this monorepo: `projects/06-quant-lab/`.
 |-------|-------------|--------|
 | 1 | Scaffold | Done |
 | 2 | Data layer + front-month roll (fixture-only) | Done |
-| 3 | Backtest engine + cost model | Planned |
+| 3 | Backtest engine + cost model (NQ, no-lookahead tests) | Done |
 | 4 | MA study (20/50/200) | Planned |
 | 5 | NQ→stock lead/lag analysis | Planned |
 | 6 | Walk-forward ML vs baseline | Planned |
@@ -92,12 +92,23 @@ projects/06-quant-lab/
 
 _Pending — filled after pre-registered experiments run._
 
+## Backtest engine (NQ)
+
+Vectorized research engine in `src/quant_lab/backtest/`:
+
+- **No lookahead:** `signal[t]` (known at close of bar `t`) becomes the position held over bar `t+1`.
+- **Costs:** `FuturesCostModel` defaults to NQ tick size `0.25`, point value `$20`, commission `$2.50`/side, `1` tick slippage. Assumptions are attached to every result.
+- **Scope:** NQ futures bars only in this step — no SPY / 0DTE / options paths.
+
+Required tests before reporting strategy results: `tests/test_no_lookahead.py`, `tests/test_cost_model.py`.
+
 ## Limitations
 
 - Research only; results are not investment advice and ignore many real-world frictions.
 - Step 2 is fixture-only for Massive until `MASSIVE_API_KEY` is configured.
 - Front-month series is unadjusted by default; rolls introduce price jumps unless back-adjust is enabled.
-- Options / SPY 0DTE premium data is out of scope for the NQ data layer.
+- Options / SPY 0DTE premium data is out of scope for the NQ data layer and for step 3.
+- No strategy performance is reported in step 3 — engine + tests only.
 - Holdout policy and cost assumptions will be documented per experiment SPEC.
 
 ## License

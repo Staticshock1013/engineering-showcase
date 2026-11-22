@@ -83,7 +83,7 @@ Research-only equity/futures backtesting and ML direction models. No live tradin
 
 - [x] Scaffold: pyproject, package layout, `.env.example`, gitignore, CI, README skeleton
 - [x] Data layer (fixture-only Massive client, Robinhood local CSV/Parquet loader, NQ front-month roll by session volume, download CLI)
-- [ ] Backtest engine with explicit costs + no-lookahead tests
+- [x] Backtest engine with explicit costs + no-lookahead tests (NQ only)
 - [ ] MA study (20/50/200) as a pre-registered experiment
 - [ ] NQ→stock lead/lag analysis experiment
 - [ ] Walk-forward ML vs naive baseline experiment
