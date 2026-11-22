@@ -6,6 +6,8 @@ from pathlib import Path
 
 from quant_lab import __version__
 
+ROOT = Path(__file__).resolve().parents[1]
+
 
 def test_version_is_semver_like() -> None:
     parts = __version__.split(".")
@@ -14,7 +16,6 @@ def test_version_is_semver_like() -> None:
 
 
 def test_package_layout_exists() -> None:
-    root = Path(__file__).resolve().parents[1]
     for rel in (
         "src/quant_lab/data",
         "src/quant_lab/features",
@@ -25,16 +26,18 @@ def test_package_layout_exists() -> None:
         "data/fixtures",
         ".env.example",
     ):
-        assert (root / rel).exists(), f"missing {rel}"
+        assert (ROOT / rel).exists(), f"missing {rel}"
 
 
-def test_env_example_has_no_secret_values() -> None:
-    text = (Path(__file__).resolve().parents[1] / ".env.example").read_text(encoding="utf-8")
+def test_env_example_keeps_secrets_blank() -> None:
+    text = (ROOT / ".env.example").read_text(encoding="utf-8")
+    assert "ROBINHOOD_DATA_DIR=" in text
+    assert "MASSIVE_API_KEY=" in text
+    assert "ROBINHOOD_PASSWORD" not in text
     for line in text.splitlines():
         stripped = line.strip()
         if not stripped or stripped.startswith("#") or "=" not in stripped:
             continue
-        _, _, value = stripped.partition("=")
-        # Allow non-secret defaults (URLs, paths, dates, symbol roots).
-        assert "sk-" not in value.lower()
-        assert "password" not in value.lower() or value == ""
+        key, _, value = stripped.partition("=")
+        if key.endswith("API_KEY") or key.endswith("PASSWORD"):
+            assert value == "", f"{key} must be blank in .env.example"

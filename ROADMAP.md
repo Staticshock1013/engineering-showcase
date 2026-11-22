@@ -76,3 +76,15 @@ Playwright + TypeScript tests against the IT Service Desk Simulator (and Career 
 - [ ] Broken-link and accessibility scans
 - [ ] Visual regression baselines and HTML test report published as a CI artifact
 - [ ] README, test strategy doc, challenges, demo script
+
+## 6. quant-lab — `projects/06-quant-lab`
+
+Research-only equity/futures backtesting and ML direction models. No live trading.
+
+- [x] Scaffold: pyproject, package layout, `.env.example`, gitignore, CI, README skeleton
+- [x] Data layer (fixture-only Massive client, Robinhood local CSV/Parquet loader, NQ front-month roll by session volume, download CLI)
+- [ ] Backtest engine with explicit costs + no-lookahead tests
+- [ ] MA study (20/50/200) as a pre-registered experiment
+- [ ] NQ→stock lead/lag analysis experiment
+- [ ] Walk-forward ML vs naive baseline experiment
+- [ ] README results, limitations, reproduce steps; keep NQ vs SPY 0DTE experiments separate

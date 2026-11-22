@@ -1,0 +1,12 @@
+[
+  {"session_end_date": "2024-03-11", "ticker": "NQH6", "volume": 420000, "open": 17800.0, "high": 17850.0, "low": 17750.0, "close": 17820.0},
+  {"session_end_date": "2024-03-11", "ticker": "NQM6", "volume": 85000, "open": 17840.0, "high": 17890.0, "low": 17790.0, "close": 17855.0},
+  {"session_end_date": "2024-03-12", "ticker": "NQH6", "volume": 390000, "open": 17820.0, "high": 17880.0, "low": 17790.0, "close": 17840.0},
+  {"session_end_date": "2024-03-12", "ticker": "NQM6", "volume": 120000, "open": 17855.0, "high": 17910.0, "low": 17820.0, "close": 17870.0},
+  {"session_end_date": "2024-03-13", "ticker": "NQH6", "volume": 310000, "open": 17840.0, "high": 17890.0, "low": 17780.0, "close": 17810.0},
+  {"session_end_date": "2024-03-13", "ticker": "NQM6", "volume": 280000, "open": 17870.0, "high": 17920.0, "low": 17830.0, "close": 17890.0},
+  {"session_end_date": "2024-03-14", "ticker": "NQH6", "volume": 250000, "open": 17810.0, "high": 17840.0, "low": 17720.0, "close": 17750.0},
+  {"session_end_date": "2024-03-14", "ticker": "NQM6", "volume": 360000, "open": 17890.0, "high": 17940.0, "low": 17800.0, "close": 17820.0},
+  {"session_end_date": "2024-03-15", "ticker": "NQH6", "volume": 90000, "open": 17750.0, "high": 17780.0, "low": 17680.0, "close": 17700.0},
+  {"session_end_date": "2024-03-15", "ticker": "NQM6", "volume": 410000, "open": 17820.0, "high": 17880.0, "low": 17760.0, "close": 17840.0}
+]

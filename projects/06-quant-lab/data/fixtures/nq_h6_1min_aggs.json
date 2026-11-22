@@ -1,0 +1,35 @@
+{
+  "status": "OK",
+  "results": [
+    {
+      "ticker": "NQH6",
+      "window_start": 1710144000000000000,
+      "open": 17800.0,
+      "high": 17805.0,
+      "low": 17798.0,
+      "close": 17802.5,
+      "volume": 1200,
+      "session_end_date": "2024-03-11"
+    },
+    {
+      "ticker": "NQH6",
+      "window_start": 1710144060000000000,
+      "open": 17802.5,
+      "high": 17810.0,
+      "low": 17801.0,
+      "close": 17808.0,
+      "volume": 980,
+      "session_end_date": "2024-03-11"
+    },
+    {
+      "ticker": "NQH6",
+      "window_start": 1710144120000000000,
+      "open": 17808.0,
+      "high": 17812.0,
+      "low": 17800.0,
+      "close": 17801.0,
+      "volume": 1500,
+      "session_end_date": "2024-03-11"
+    }
+  ]
+}

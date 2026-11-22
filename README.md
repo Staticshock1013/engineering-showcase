@@ -13,6 +13,7 @@ held to the same quality bar: it runs, it is tested, and it is documented honest
 | 3 | Cloud Infrastructure Monitor | Python, FastAPI, Docker, Linux, C++ probe | Planned | Cloud Support, IT Operations, Data Center Tech |
 | 4 | Security Operations Lab | Python, C++ log parser, Linux | Planned | SOC Trainee, Security Support |
 | 5 | QA Automation Testing Suite | Playwright, TypeScript, GitHub Actions | Planned | QA Intern, Junior QA Engineer |
+| 6 | [quant-lab](projects/06-quant-lab/) | Python, pandas, scikit-learn | In progress | ML Engineer, Quant Research (portfolio) |
 
 Also featured (separate repo): **Career Intelligence OS** — an AI-assisted career planning app built in TypeScript.
 

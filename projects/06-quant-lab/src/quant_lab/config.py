@@ -17,8 +17,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    robinhood_username: str | None = None
-    robinhood_password: SecretStr | None = None
+    # Local Robinhood CSV/Parquet exports only (no username/password client).
     robinhood_data_dir: Path | None = None
 
     massive_api_key: SecretStr | None = None
