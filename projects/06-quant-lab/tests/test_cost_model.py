@@ -31,18 +31,28 @@ def _nq_bars() -> pd.DataFrame:
 
 def test_nq_default_cost_per_side_is_commission_plus_slippage() -> None:
     model = FuturesCostModel(
+        contract="NQ",
         commission_per_side=2.50,
         slippage_ticks=1.0,
         tick_size=0.25,
         point_value=20.0,
     )
     # 1 tick * 0.25 points * $20 = $5 slippage; + $2.50 commission = $7.50 / side
+    assert model.contract == "NQ"
     assert model.slippage_per_side_usd() == pytest.approx(5.0)
     assert model.cost_per_side_usd() == pytest.approx(7.50)
     assert model.cost_for_trade(1.0) == pytest.approx(7.50)
     assert model.cost_for_trade(2.0) == pytest.approx(15.0)
     assumptions = model.as_assumptions()
+    assert assumptions["contract"] == "NQ"
+    assert assumptions["commission_basis"] == "usd_per_contract_per_side"
     assert assumptions["round_trip_1_contract_usd"] == pytest.approx(15.0)
+    assert "MNQ" not in str(assumptions["note"]) or "not MNQ" in str(assumptions["note"])
+
+
+def test_mnq_defaults_are_rejected() -> None:
+    with pytest.raises(ValueError, match="MNQ"):
+        FuturesCostModel(contract="MNQ")
 
 
 def test_cost_for_trade_rejects_negative_turnover() -> None:

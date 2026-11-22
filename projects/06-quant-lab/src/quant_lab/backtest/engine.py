@@ -25,7 +25,7 @@ class BacktestResult:
     """Per-bar ledger plus cost assumptions used for the run."""
 
     ledger: pd.DataFrame
-    cost_assumptions: dict[str, float]
+    cost_assumptions: dict[str, float | str]
     contracts: float
 
     @property

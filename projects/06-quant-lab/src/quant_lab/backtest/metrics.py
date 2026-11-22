@@ -21,9 +21,9 @@ class PerformanceSummary:
     total_contracts_traded: float
     max_drawdown: float
     sharpe_per_bar: float
-    cost_assumptions: dict[str, float]
+    cost_assumptions: dict[str, float | str]
 
-    def as_dict(self) -> dict[str, float | int | dict[str, float]]:
+    def as_dict(self) -> dict[str, float | int | dict[str, float | str]]:
         return {
             "bars": self.bars,
             "gross_pnl": self.gross_pnl,
