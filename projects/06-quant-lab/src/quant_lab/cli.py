@@ -80,5 +80,18 @@ def download_data(
     raise typer.BadParameter(f"unknown source: {source}")
 
 
+@app.command("run-ma-study")
+def run_ma_study_cmd() -> None:
+    """Run the pre-registered NQ ma-study experiment (verifies SPEC hash first)."""
+    from quant_lab.analysis.run_ma_study import run_ma_study
+
+    payload = run_ma_study()
+    decision = payload["holdout_decision"]
+    typer.echo(f"SPEC SHA-256: {payload['spec_sha256']}")
+    typer.echo(f"Holdout: {'PASS' if decision['passed'] else 'FAIL'} — {decision['reason']}")
+    typer.echo(f"Wrote {payload['results_path']}")
+    typer.echo(f"Summary {payload['summary_path']}")
+
+
 if __name__ == "__main__":
     app()

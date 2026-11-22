@@ -20,7 +20,7 @@ Path in this monorepo: `projects/06-quant-lab/`.
 | 1 | Scaffold | Done |
 | 2 | Data layer + front-month roll (fixture-only) | Done |
 | 3 | Backtest engine + cost model (NQ, no-lookahead tests) | Done |
-| 4 | MA study (20/50/200) | Planned |
+| 4 | MA study (20/50/200), NQ only | Done |
 | 5 | NQ→stock lead/lag analysis | Planned |
 | 6 | Walk-forward ML vs baseline | Planned |
 | 7 | Results + limitations in README | Planned |
@@ -90,7 +90,14 @@ projects/06-quant-lab/
 
 ## Results summary
 
-_Pending — filled after pre-registered experiments run._
+### ma-study (NQ, pre-registered)
+
+- Frozen SPEC SHA-256: `dd4419213df4d74c313538496fc0b031d8dd34d24260922d392882ba9d035e96`
+- Costs: **NQ $2.50 per side** (`commission_basis=usd_per_contract_per_side`), not MNQ / not round-trip
+- Data: synthetic NQ daily fixture (stand-in until Massive key is configured)
+- Holdout primary metric: **PASS** via `ma20_family` (n=37, hit-rate edge +5.4 pp vs random)
+- Secondary (mean net USD / event): **does not beat** random baseline on holdout (`ma20_family` −110.82 vs −77.65). Hit-rate pass ≠ profitable after NQ costs.
+- Full table: `experiments/ma-study/RESULTS.md`
 
 ## Backtest engine (NQ)
 
