@@ -12,6 +12,7 @@ outputs/
 *.parquet
 *.csv
 !data/fixtures/**/*.csv
+!examples/pdhl_demo/fixtures/**/*.csv
 
 # Python
 __pycache__/
