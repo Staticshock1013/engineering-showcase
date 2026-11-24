@@ -1,0 +1,40 @@
+{
+  "composite": {
+    "bounding_box": [
+      -74.1,
+      40.6,
+      -73.7,
+      40.9
+    ],
+    "city": "New York City",
+    "granule_ur": "MOD11A2.A2024177.h12v04.061.2024186041340",
+    "mean_celsius": 30.744,
+    "qc_rule": "mandatory_qa=00 and lst_error<=2K",
+    "selected_pixel_count": 1307,
+    "temporal_days": 8,
+    "time_end": "2024-07-02T23:59:59.000Z",
+    "time_start": "2024-06-25T00:00:00.000Z",
+    "valid_pixel_count": 210
+  },
+  "data_product_key": "mod11a2_v061_daytime_lst",
+  "data_status": "verified_real_mod11a2_8_day_composite_not_annual",
+  "processing": {
+    "offset_celsius": -273.15,
+    "qc_rule": "mandatory_qa=00 and lst_error<=2K",
+    "scale_factor": 0.02,
+    "source_variable": "LST_Day_1km",
+    "spatial_sampling": "MODIS sinusoidal pixel centers inside the stated bounding box"
+  },
+  "product_documentation": "https://lpdaac.usgs.gov/documents/715/MOD11_User_Guide_V61.pdf",
+  "provenance": {
+    "cmr_concept_id": "G3145179963-LPCLOUD",
+    "data_url": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11A2.061/MOD11A2.A2024177.h12v04.061.2024186041340/MOD11A2.A2024177.h12v04.061.2024186041340.hdf",
+    "granule_ur": "MOD11A2.A2024177.h12v04.061.2024186041340",
+    "product_short_name": "MOD11A2",
+    "product_version": "061",
+    "provider": "LPCLOUD",
+    "query_url": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=MOD11A2&version=061&bounding_box=-74.1%2C40.6%2C-73.7%2C40.9&temporal=2024-06-25T00%3A00%3A00Z%2C2024-07-03T00%3A00%3A00Z&page_size=1",
+    "time_end": "2024-07-02T23:59:59.000Z",
+    "time_start": "2024-06-25T00:00:00.000Z"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "composite": {
+    "bounding_box": [
+      72.8,
+      18.9,
+      73.0,
+      19.1
+    ],
+    "city": "Mumbai",
+    "granule_ur": "MOD11A2.A2024049.h24v07.061.2024061081515",
+    "mean_celsius": 31.0826,
+    "qc_rule": "mandatory_qa=00 and lst_error<=2K",
+    "selected_pixel_count": 545,
+    "temporal_days": 8,
+    "time_end": "2024-02-25T23:59:59.000Z",
+    "time_start": "2024-02-18T00:00:00.000Z",
+    "valid_pixel_count": 113
+  },
+  "data_product_key": "mod11a2_v061_daytime_lst",
+  "data_status": "verified_real_mod11a2_8_day_composite_not_annual",
+  "processing": {
+    "offset_celsius": -273.15,
+    "qc_rule": "mandatory_qa=00 and lst_error<=2K",
+    "scale_factor": 0.02,
+    "source_variable": "LST_Day_1km",
+    "spatial_sampling": "MODIS sinusoidal pixel centers inside the stated bounding box"
+  },
+  "product_documentation": "https://lpdaac.usgs.gov/documents/715/MOD11_User_Guide_V61.pdf",
+  "provenance": {
+    "cmr_concept_id": "G2882718774-LPCLOUD",
+    "data_url": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11A2.061/MOD11A2.A2024049.h24v07.061.2024061081515/MOD11A2.A2024049.h24v07.061.2024061081515.hdf",
+    "granule_ur": "MOD11A2.A2024049.h24v07.061.2024061081515",
+    "product_short_name": "MOD11A2",
+    "product_version": "061",
+    "provider": "LPCLOUD",
+    "query_url": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=MOD11A2&version=061&bounding_box=72.8%2C18.9%2C73.0%2C19.1&temporal=2024-02-18T00%3A00%3A00Z%2C2024-02-26T00%3A00%3A00Z&page_size=1",
+    "time_end": "2024-02-25T23:59:59.000Z",
+    "time_start": "2024-02-18T00:00:00.000Z"
+  }
+}

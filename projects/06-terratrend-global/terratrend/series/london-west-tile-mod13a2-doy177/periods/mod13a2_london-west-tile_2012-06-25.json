@@ -1,0 +1,40 @@
+{
+  "composite": {
+    "bounding_box": [
+      -0.3,
+      51.35,
+      -0.05,
+      51.65
+    ],
+    "city": "London (west tile)",
+    "granule_ur": "MOD13A2.A2012177.h17v03.061.2021211195048",
+    "mean_ndvi": 0.53,
+    "qc_rule": "detailed_vi_quality_bits_0_1=00 and pixel_reliability=0",
+    "selected_pixel_count": 648,
+    "temporal_days": 16,
+    "time_end": "2012-07-10T23:59:59.000Z",
+    "time_start": "2012-06-25T00:00:00.000Z",
+    "valid_pixel_count": 148
+  },
+  "data_product_key": "mod13a2_v061_ndvi",
+  "data_status": "verified_real_mod13a2_16_day_composite_not_annual",
+  "processing": {
+    "in_file_scale_divisor": 10000.0,
+    "qc_rule": "detailed_vi_quality_bits_0_1=00 and pixel_reliability=0",
+    "scale_factor": 0.0001,
+    "source_variable": "1 km 16 days NDVI",
+    "spatial_sampling": "MODIS sinusoidal pixel centers inside the complete stated bounding box"
+  },
+  "product_documentation": "https://lpdaac.usgs.gov/documents/621/MOD13_User_Guide_V61.pdf",
+  "provenance": {
+    "cmr_concept_id": "G2597492071-LPCLOUD",
+    "data_url": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD13A2.061/MOD13A2.A2012177.h17v03.061.2021211195048/MOD13A2.A2012177.h17v03.061.2021211195048.hdf",
+    "granule_ur": "MOD13A2.A2012177.h17v03.061.2021211195048",
+    "product_short_name": "MOD13A2",
+    "product_version": "061",
+    "provider": "LPCLOUD",
+    "query_url": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=MOD13A2&version=061&bounding_box=-0.3%2C51.35%2C-0.05%2C51.65&temporal=2012-06-25T00%3A00%3A00Z%2C2012-07-11T00%3A00%3A00Z&page_size=1",
+    "time_end": "2012-07-10T23:59:59.000Z",
+    "time_start": "2012-06-25T00:00:00.000Z"
+  }
+}
