@@ -1,8 +1,25 @@
 # Engineering Showcase
 
 Real-world software projects by **Denzell Richardson**, built in small, reviewable daily milestones.
-Each project targets a concrete problem from IT support, cloud operations, QA, or security work, and is
-held to the same quality bar: it runs, it is tested, and it is documented honestly.
+Each project targets a concrete problem from IT support, cloud operations, QA, security, or ML research,
+and is held to the same quality bar: it runs, it is tested, and it is documented honestly.
+
+## Featured now: quant-lab
+
+[![quant-lab architecture](projects/06-quant-lab/docs/architecture.jpg)](projects/06-quant-lab/)
+
+**[quant-lab](projects/06-quant-lab/)** — research-only NQ futures + equity backtesting for an ML engineering portfolio.
+
+- Pre-registered experiments (`SPEC.md` + SHA-256) before any results
+- No-lookahead backtest engine with **explicit NQ costs** ($2.50 / side)
+- Front-month futures roll by session volume (Massive has no continuous NQ)
+- Portfolio demo: SPY PDHL failed-break → retest (underlying points only)
+- **No live trading.** Secrets and raw market data stay out of git
+
+```bash
+cd projects/06-quant-lab && python3.11 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]" && pytest -q && python examples/pdhl_demo/pdhl_backtest.py
+```
 
 ## Projects
 
@@ -13,7 +30,7 @@ held to the same quality bar: it runs, it is tested, and it is documented honest
 | 3 | Cloud Infrastructure Monitor | Python, FastAPI, Docker, Linux, C++ probe | Planned | Cloud Support, IT Operations, Data Center Tech |
 | 4 | Security Operations Lab | Python, C++ log parser, Linux | Planned | SOC Trainee, Security Support |
 | 5 | QA Automation Testing Suite | Playwright, TypeScript, GitHub Actions | Planned | QA Intern, Junior QA Engineer |
-| 6 | [quant-lab](projects/06-quant-lab/) | Python, pandas, scikit-learn | In progress | ML Engineer, Quant Research (portfolio) |
+| 6 | **[quant-lab](projects/06-quant-lab/)** | Python, pandas, scikit-learn | **Showcase ready** (PR) | ML Engineer, Quant Research |
 
 Also featured (separate repo): **Career Intelligence OS** — an AI-assisted career planning app built in TypeScript.
 

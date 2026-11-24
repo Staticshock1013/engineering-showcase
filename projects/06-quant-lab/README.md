@@ -1,56 +1,50 @@
 # quant-lab
 
-Research-only equity and futures backtesting lab for ML engineering portfolio work.
+Research-only equity and futures backtesting lab for an ML engineering portfolio.
 
-**No live trading. No broker order placement.** Credentials stay in a local `.env` (gitignored). Raw market data stays under `data/` (gitignored); only small fixtures ship with the repo.
+**No live trading. No broker order placement.** Secrets stay in `.env` (gitignored). Raw market data stays under `data/` (gitignored); only small fixtures ship with the repo.
 
-Path in this monorepo: `projects/06-quant-lab/`.
+Monorepo path: [`projects/06-quant-lab/`](./).
 
-## Goals
+![quant-lab architecture](docs/architecture.jpg)
 
-1. Backtest equity strategies on local Robinhood CSV/Parquet exports.
-2. Backtest futures strategies on Massive NQ front-month aggregates (1-min and daily).
-3. Study moving-average behavior and which stocks track NQ (lag + strength).
-4. Train one simple ML direction model with walk-forward validation vs a naive baseline.
+*Pipeline: data → features → backtest (no-lookahead + explicit NQ costs) → pre-registered experiments → portfolio demos.*
+
+## What this showcases
+
+| Skill | How it shows up |
+|-------|-----------------|
+| Research discipline | Experiments freeze `SPEC.md` + SHA-256 `HASH.txt` before results |
+| Correctness | No-lookahead guards; cost model attached to every result |
+| Futures data engineering | Massive NQ aggregates + front-month roll by session volume |
+| Honest reporting | Synthetic MA holdout marked **SPENT / not evidence** |
+| Portfolio demos | SPY PDHL failed-break → retest (underlying points only) |
+
+## Architecture
+
+```mermaid
+flowchart LR
+  A[Massive NQ / local CSV] --> B[Cache + fixtures]
+  B --> C[Features<br/>MA 20/50/200]
+  C --> D[Backtest engine<br/>signal t → position t+1]
+  D --> E[Costs<br/>NQ $2.50 / side]
+  E --> F[Experiments<br/>SPEC + HASH]
+  F --> G[Results + demos]
+```
 
 ## Status
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 1 | Scaffold | Done |
-| 2 | Data layer + front-month roll (fixture-only) | Done |
-| 3 | Backtest engine + cost model (NQ, no-lookahead tests) | Done |
-| 4 | MA study (20/50/200), NQ only | Done |
+| 1 | Scaffold, CI, secrets hygiene | Done |
+| 2 | Data layer + NQ front-month roll | Done |
+| 3 | Backtest engine + cost / no-lookahead tests | Done |
+| 4 | MA study (pre-registered; synthetic holdout spent) | Done* |
+| — | PDHL portfolio demo (not a frozen experiment) | Done |
 | 5 | NQ→stock lead/lag analysis | Planned |
 | 6 | Walk-forward ML vs baseline | Planned |
-| 7 | Results + limitations in README | Planned |
 
-## Data access (confirmed)
-
-### Massive futures (Polygon rebrand)
-
-Verified against current Massive docs:
-
-- Base URL: `https://api.massive.com`
-- Contracts: `GET /futures/v1/contracts`
-- Aggregates: `GET /futures/v1/aggs/{ticker}` with `resolution=1min` or `1day`
-- **No continuous NQ series** — front month is built by highest session volume (see `src/quant_lab/data/roll.py`)
-
-Live downloads stay disabled until `MASSIVE_API_KEY` is set as a Cursor/GitHub secret (never paste keys into chat). Until then, use fixtures:
-
-```bash
-quant-lab download-data --source fixtures
-```
-
-### Robinhood equities
-
-Local CSV/Parquet exports only via `ROBINHOOD_DATA_DIR`. No unofficial API client.
-
-```bash
-quant-lab download-data --source robinhood
-```
-
-Robinhood minute history is short (~2 weeks). Longer SPY cash history should come from Massive once a key is configured. **SPY 0DTE / option premium is a separate experiment** and is not part of the NQ roll pipeline.
+\*Synthetic MA holdout is archived as non-evidential. Real-data evaluation needs local `data/ff_nq/` synced into the environment.
 
 ## Quick start
 
@@ -61,63 +55,50 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 cp .env.example .env   # fill locally; never commit .env
 quant-lab download-data --source fixtures
-pytest
-ruff check src tests
+pytest -q
+ruff check src tests examples/pdhl_demo
 quant-lab version
+python examples/pdhl_demo/pdhl_backtest.py
 ```
 
 ## Experiment protocol
 
-Before any test run:
+1. Write `experiments/<name>/SPEC.md` (hypothesis, windows, metric, threshold, baseline, holdout).
+2. Save SHA-256 of that file to `HASH.txt` and **commit before running results**.
+3. Verify the hash before scoring; holdout is never used for tuning.
+4. Report primary and secondary metrics; do not shop for the passing one.
 
-1. Write `experiments/<name>/SPEC.md` (hypothesis, data window, metric, threshold, baseline, holdout).
-2. Save `SHA-256` of that spec to `experiments/<name>/HASH.txt`.
-3. Results must be checked against the frozen spec; holdout windows are never used for tuning.
-4. Use walk-forward validation (not random splits). State transaction costs and slippage explicitly.
+## Results (honest)
 
-NQ futures experiments and SPY 0DTE experiments must live in **separate** folders. See `experiments/README.md`.
+### ma-study (synthetic) — SPENT, not evidence
 
-## Layout
+- SPEC SHA-256: `dd4419213df4d74c313538496fc0b031d8dd34d24260922d392882ba9d035e96`
+- Costs: **NQ $2.50 per side** (`usd_per_contract_per_side`) — not MNQ, not round-trip
+- Archive: [`experiments/ma-study/RESULTS.md`](experiments/ma-study/RESULTS.md)
+- Do **not** cite the synthetic holdout as a pass
 
-```
-projects/06-quant-lab/
-  src/quant_lab/     data, features, backtest, models, analysis
-  experiments/       pre-registered SPEC.md + HASH.txt per experiment
-  tests/             unit tests (roll, costs, features, no-lookahead)
-  data/              local cache (gitignored) + fixtures/ (committed samples)
-  notebooks/         optional summary notebook only — no business logic
-```
+### PDHL demo (portfolio illustration)
 
-## Results summary
+- Path: [`examples/pdhl_demo/`](examples/pdhl_demo/)
+- Underlying SPY points only; round-trip **0.14** points; no options pricing
+- Not `experiments/spy-pdhl-v1` (that frozen SPEC is not on this branch yet)
 
-### ma-study (NQ, pre-registered)
+## Technical challenges solved
 
-- Frozen SPEC SHA-256: `dd4419213df4d74c313538496fc0b031d8dd34d24260922d392882ba9d035e96`
-- Costs: **NQ $2.50 per side** (`commission_basis=usd_per_contract_per_side`), not MNQ / not round-trip
-- Data: synthetic NQ daily fixture (stand-in until Massive key is configured)
-- Holdout primary metric: **PASS** via `ma20_family` (n=37, hit-rate edge +5.4 pp vs random)
-- Secondary (mean net USD / event): **does not beat** random baseline on holdout (`ma20_family` −110.82 vs −77.65). Hit-rate pass ≠ profitable after NQ costs.
-- Full table: `experiments/ma-study/RESULTS.md`
-
-## Backtest engine (NQ)
-
-Vectorized research engine in `src/quant_lab/backtest/`:
-
-- **No lookahead:** `signal[t]` (known at close of bar `t`) becomes the position held over bar `t+1`.
-- **Costs:** `FuturesCostModel` defaults to NQ tick size `0.25`, point value `$20`, commission `$2.50`/side, `1` tick slippage. Assumptions are attached to every result.
-- **Scope:** NQ futures bars only in this step — no SPY / 0DTE / options paths.
-
-Required tests before reporting strategy results: `tests/test_no_lookahead.py`, `tests/test_cost_model.py`.
+1. **No continuous NQ from Massive** — built front-month by highest session volume and documented unadjusted jumps.
+2. **Lookahead leakage** — signals at close of `t` only become positions on `t+1`; causal SMAs are perturbation-tested.
+3. **Cost honesty** — NQ commission/slippage are first-class fields on every result payload.
+4. **Pre-registration** — hash-gated runners refuse mutated SPECs.
+5. **Portfolio vs experiment separation** — demos live under `examples/`; frozen tests live under `experiments/`.
 
 ## Limitations
 
-- Research only; results are not investment advice and ignore many real-world frictions.
-- Step 2 is fixture-only for Massive until `MASSIVE_API_KEY` is configured.
-- Front-month series is unadjusted by default; rolls introduce price jumps unless back-adjust is enabled.
-- Options / SPY 0DTE premium data is out of scope for the NQ data layer and for step 3.
-- No strategy performance is reported in step 3 — engine + tests only.
-- Holdout policy and cost assumptions will be documented per experiment SPEC.
+- Research only; not investment advice.
+- Massive live pulls need `MASSIVE_API_KEY` (Cursor/GitHub secret — never paste into chat).
+- MA study evidence on synthetic data is spent; real 1-min → daily path is prepared but needs `data/ff_nq/`.
+- Lead/lag and walk-forward ML phases are not implemented yet.
+- Unadjusted continuous futures jump at rolls unless back-adjust is enabled.
 
 ## License
 
-MIT (same as the parent engineering-showcase repo).
+MIT (same as the parent [engineering-showcase](../../) repo).

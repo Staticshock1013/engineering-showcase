@@ -87,4 +87,4 @@ Research-only equity/futures backtesting and ML direction models. No live tradin
 - [x] MA study (20/50/200) as a pre-registered experiment (NQ only)
 - [ ] NQ→stock lead/lag analysis experiment
 - [ ] Walk-forward ML vs naive baseline experiment
-- [ ] README results, limitations, reproduce steps; keep NQ vs SPY 0DTE experiments separate
+- [x] README results, limitations, reproduce steps; keep NQ vs SPY 0DTE experiments separate (portfolio visual + honest SPENT note; real ff_nq eval still pending)
