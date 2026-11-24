@@ -13,6 +13,9 @@ held to the same quality bar: it runs, it is tested, and it is documented honest
 | 3 | Cloud Infrastructure Monitor | Python, FastAPI, Docker, Linux, C++ probe | Planned | Cloud Support, IT Operations, Data Center Tech |
 | 4 | Security Operations Lab | Python, C++ log parser, Linux | Planned | SOC Trainee, Security Support |
 | 5 | QA Automation Testing Suite | Playwright, TypeScript, GitHub Actions | Planned | QA Intern, Junior QA Engineer |
+| 6 | [TerraTrend Global](projects/06-terratrend-global/) | Python, Streamlit, Plotly, NASA MODIS | Verified MVP | Data / Python, Geospatial, Climate tech |
+
+**TerraTrend Global** — Streamlit dashboard with authenticated NASA MODIS LST samples (six cities), NDVI period caches, and fixed-season NYC/London series kept separate from labeled synthetic fixtures. Period-level verified samples only; not annual means, city-wide extents, or decision-ready products. See [`projects/06-terratrend-global/`](projects/06-terratrend-global/).
 
 Also featured (separate repo): **Career Intelligence OS** — an AI-assisted career planning app built in TypeScript.
 
