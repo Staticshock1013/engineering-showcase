@@ -4,7 +4,7 @@
 
 Target roles: **ML Engineer**, **Quant Research (junior)**, **Data / Python Engineer**, and adjacent IT / cloud support roles.
 
-> Shipped work lives under [`projects/`](projects/). On GitHub, open the default **`main`** branch after this showcase PR is merged to see quant-lab alongside TerraTrend.
+> Shipped work lives under [`projects/`](projects/). **quant-lab** is project 7 (`projects/07-quant-lab/`). If you only see TerraTrend on `main`, open or merge [PR #2](https://github.com/Staticshock1013/engineering-showcase/pull/2).
 
 ## Hire-ready highlights
 
