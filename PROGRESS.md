@@ -3,6 +3,13 @@
 One entry per working day, newest first. Each entry lists what shipped, how it was verified, and what
 comes next.
 
+## 2026-11-25 — Setup diagnostics dashboard
+
+- Added `projects/08-setup-diagnostics/`: Polars loader, two placeholder NQ setups, and a Streamlit failure dashboard.
+- The Mac front-month parquet is the preferred input. This environment cannot see that disk, so the app generates a labeled synthetic sample and the tests run on it.
+- Verified: `cd projects/08-setup-diagnostics && ./test.sh`.
+- Next: on the Mac, open the front-month parquet in the sidebar and replace `signals_breakout` / `signals_mean_reversion`.
+
 ## 2026-11-24 — TerraTrend on the main portfolio
 
 - Merged [PR #1](https://github.com/Staticshock1013/engineering-showcase/pull/1) so

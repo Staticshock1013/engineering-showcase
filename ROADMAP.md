@@ -92,3 +92,15 @@ not annual or decision-ready products).
 - [x] Fixed-season NYC and London MOD13A2 DOY-177 series (descriptive slopes only; not annual trends)
 - [x] Methodology, limitations, architecture, demo walkthrough docs; `./test.sh` green
 - [ ] Complete contiguous annual MOD11A2 coverage before any annual-mean or multiyear-trend claims
+
+## 8. Setup diagnostics — `projects/08-setup-diagnostics`
+
+Python + Polars + Streamlit dashboard for NQ minute-bar setup failures. Research only.
+Project 7 is reserved for quant-lab on its open branch. Real Massive files stay on the
+Mac; this repo runs on a labeled synthetic sample when that parquet is absent.
+
+- [x] Polars loader for the front-month schema (`window_start` ns → America/New_York), outright filter, resample, and a file-count budget
+- [x] Two placeholder setups with a trade log: costs, R, session, volatility tercile, EMA regime, MAE, MFE
+- [x] Dark Streamlit dashboard: equity, failure heatmaps, excursion scatters, trade inspector
+- [x] Pytest coverage for the timestamp contract, session labels, costs, and the planted win/loss split
+- [ ] Point a local run at `nq_front_1m_2023_2026.parquet` and replace the placeholder signals with the real rules

@@ -1,0 +1,6 @@
+polars>=1.30
+pyarrow>=18
+streamlit>=1.40
+plotly>=5.24
+numpy>=2
+pytest>=8
