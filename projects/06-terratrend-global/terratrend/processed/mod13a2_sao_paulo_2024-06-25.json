@@ -1,0 +1,40 @@
+{
+  "composite": {
+    "bounding_box": [
+      -46.75,
+      -23.65,
+      -46.5,
+      -23.45
+    ],
+    "city": "S\u00e3o Paulo",
+    "granule_ur": "MOD13A2.A2024177.h13v11.061.2024195021300",
+    "mean_ndvi": 0.2731,
+    "qc_rule": "detailed_vi_quality_bits_0_1=00 and pixel_reliability=0",
+    "selected_pixel_count": 662,
+    "temporal_days": 16,
+    "time_end": "2024-07-10T23:59:59.000Z",
+    "time_start": "2024-06-25T00:00:00.000Z",
+    "valid_pixel_count": 167
+  },
+  "data_product_key": "mod13a2_v061_ndvi",
+  "data_status": "verified_real_mod13a2_16_day_composite_not_annual",
+  "processing": {
+    "in_file_scale_divisor": 10000.0,
+    "qc_rule": "detailed_vi_quality_bits_0_1=00 and pixel_reliability=0",
+    "scale_factor": 0.0001,
+    "source_variable": "1 km 16 days NDVI",
+    "spatial_sampling": "MODIS sinusoidal pixel centers inside the complete stated bounding box"
+  },
+  "product_documentation": "https://lpdaac.usgs.gov/documents/621/MOD13_User_Guide_V61.pdf",
+  "provenance": {
+    "cmr_concept_id": "G3157372598-LPCLOUD",
+    "data_url": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD13A2.061/MOD13A2.A2024177.h13v11.061.2024195021300/MOD13A2.A2024177.h13v11.061.2024195021300.hdf",
+    "granule_ur": "MOD13A2.A2024177.h13v11.061.2024195021300",
+    "product_short_name": "MOD13A2",
+    "product_version": "061",
+    "provider": "LPCLOUD",
+    "query_url": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=MOD13A2&version=061&bounding_box=-46.75%2C-23.65%2C-46.5%2C-23.45&temporal=2024-06-25T00%3A00%3A00Z%2C2024-07-11T00%3A00%3A00Z&page_size=1",
+    "time_end": "2024-07-10T23:59:59.000Z",
+    "time_start": "2024-06-25T00:00:00.000Z"
+  }
+}

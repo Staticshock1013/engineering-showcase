@@ -1,0 +1,219 @@
+# TerraTrend Global — Phase 2 validated sample
+
+TerraTrend Global is a small, transparent MVP for exploring how a global environmental-change
+dashboard can organize indicators, display regional context, and calculate repeatable summaries.
+
+> **Data status:** the global dashboard charts are labeled deterministic synthetic fixtures and are
+> unsuitable for scientific, policy, or operational decisions. Separate, cached MOD11A2 v6.1
+> land-surface-temperature samples for six cities (New York City, London, Lagos, Tokyo, Mumbai,
+> São Paulo) and MOD13A2 v6.1 NDVI period samples for New York City and São Paulo are processed
+> from authenticated source data with provenance. None is a global, annual, city-wide, or
+> decision-ready result.
+
+## Problem and approach
+
+Environmental-change dashboards often blur prototype values, catalog metadata, and validated
+observations. TerraTrend keeps them separate: synthetic fixtures support global interface
+prototyping; authenticated MODIS caches retain product/QC/provenance evidence; and city histories
+are labeled fixed-season unless complete annual coverage exists.
+
+**Technologies:** Python 3.12, Streamlit, Plotly, NumPy, SciPy, PyHDF, NASA CMR/Earthdata.
+
+## What is included
+
+- A typed global indicator registry for surface temperature, vegetation, and precipitation anomalies.
+- A validated CSV fixture with 18 clearly labeled synthetic regional observations.
+- A reusable, dependency-free statistics module for descriptive and regional summaries.
+- A Streamlit dashboard with indicator selection, global map, regional comparison, and provenance
+  disclosure.
+- A validated HDF4 MOD11A2 decoder with documented scaling, QC filtering, sinusoidal spatial
+  sampling, a duration-weighted annual aggregation function, and deterministic tests.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  F[Labeled synthetic CSV] --> V[Fixture validation]
+  R[Indicator registry] --> V
+  V --> S[Statistics module]
+  V --> D[Streamlit dashboard]
+  S --> D
+  C[NASA CMR metadata] --> P[Authenticated HDF4 retrieval]
+  P --> H[Validated MOD11A2 processor]
+  H --> O[Credential-free cached output and provenance]
+  O --> D
+```
+
+## Run locally
+
+Python 3.12+ is recommended.
+
+```bash
+cd projects/06-terratrend-global
+./run-local.sh
+```
+
+## Test
+
+```bash
+cd projects/06-terratrend-global
+./test.sh
+```
+
+## Phase 3/5 readiness documents
+
+- [Architecture](docs/architecture.md)
+- [Methodology](docs/methodology.md)
+- [Data sources and provenance](docs/data-sources.md)
+- [Limitations](docs/limitations.md)
+- [Requirements audit](docs/requirements-audit.md)
+- [Final run instructions](docs/final-run.md)
+- [2–3 minute demo walkthrough](docs/demo-walkthrough.md)
+
+## Technical challenges solved
+
+- Securely discovered and retrieved protected NASA granules without storing credentials.
+- Verified in-file product metadata, QC flags, scale conventions, and sinusoidal city sampling.
+- Prevented invalid city comparisons through explicit product, unit, period, QC, and sampling gates.
+- Built bounded, resumable fixed-season ingestion that refuses annual claims without complete annual
+  coverage and trend claims without enough qualifying periods.
+
+## NASA MOD11A2 verified sample
+
+Terra MODIS `MOD11A2` version `061` is an eight-day, 1200×1200 (nominal 1 km) sinusoidal
+land-surface-temperature product. An authenticated retrieval processed
+`MOD11A2.A2024001.h12v04.061.2024011195232`
+(`G2834222407-LPCLOUD`, provider `LPCLOUD`) for a New York City bounding box and January 2024:
+
+```text
+https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=MOD11A2&version=061&bounding_box=-74.10,40.60,-73.70,40.90&temporal=2024-01-01T00:00:00Z,2024-02-01T00:00:00Z&page_size=1
+```
+
+The same validated workflow also processed the geographically distinct London granule
+`MOD11A2.A2024177.h17v03.061.2024186042347` for 2024-06-25 through 2024-07-02, plus
+tile-contained expansion-city samples for Lagos, Tokyo, Mumbai, and São Paulo. São Paulo matches
+the preferred shared 2024-06-25–07-02 window; Lagos/Tokyo/Mumbai failed that window's QC checks,
+so unavailable markers were recorded and alternate verified periods were retained without forcing
+comparability.
+
+The decoder validates the retrieved file metadata against the [official MOD11 User Guide
+v6.1](https://lpdaac.usgs.gov/documents/715/MOD11_User_Guide_V61.pdf): `LST_Day_1km` must be
+Kelvin, have valid range 7500–65535, fill value 0, scale factor 0.02, and offset 0. It accepts
+only `QC_Day` pixels with mandatory QA bits 0–1 equal to `00` (good quality) and LST error bits
+6–7 no greater than `01` (≤2 K). Pixel centers are transformed from the documented MODIS
+sinusoidal tile grid and sampled only inside the stated bounding box.
+
+`terratrend/processed/mod11a2_nyc_2024-01-01.json` and
+`terratrend/processed/mod11a2_london_2024-06-25.json` are credential-free cached results with CMR
+provenance, source URL, processing rules, and counts. They are validated against
+`VERIFIED_DATA_REGISTRY` before dashboard display. No token is stored in source or output.
+`annual_mean_celsius` is duration-weighted so a shorter final composite does not receive an
+eight-day weight, and it rejects incomplete or non-contiguous calendar coverage. It remains a
+reusable function rather than a claimed annual result: each cached result contains one eight-day
+composite only.
+
+## NASA MOD13A2 verified NDVI samples
+
+An authenticated New York City retrieval processed
+`MOD13A2.A2024177.h12v04.061.2024195022551` for 2024-06-25 through 2024-07-10.
+The adapter validates `MOD13A2` v061 catalog metadata, the HDF4 NDVI valid range (-2000 to
+10000), fill value (-3000), and detailed-QA/pixel-reliability schemas against the [official MOD13
+User Guide v6.1](https://lpdaac.usgs.gov/documents/621/MOD13_User_Guide_V61.pdf). The published
+NDVI scale is 0.0001; the retrieved file records its inverse divisor (10000), so accepted raw
+values are divided by 10000 after validation.
+
+Only pixels with detailed VI-quality bits 0–1 equal to `00` and pixel reliability equal to `0`
+(good data) are sampled within the complete city bounding box. Period-level credential-free
+caches are `terratrend/processed/mod13a2_nyc_2024-06-25.json` and
+`terratrend/processed/mod13a2_sao_paulo_2024-06-25.json`. São Paulo was accepted only after the
+complete-bbox and ≥10% QC-passing pixel checks. Both are selectable in the dashboard’s
+verified-data variable control and are not annual values or trends.
+
+## Safe city comparison and CSV export
+
+The dashboard keeps verified period caches separate from synthetic global fixtures. It exports
+verified cache CSVs with product/version, period coverage, pixel counts, QC/spatial methodology,
+and CMR provenance; synthetic-fixture exports retain their non-observational label and fixture
+methodology.
+
+A city comparison is enabled only when exactly two verified caches have the same product/variable,
+unit, aggregation status, exact time interval, and QC/spatial-sampling method. Different products,
+different periods, synthetic fixtures, and incomplete/non-annual data are refused rather than
+shown as a misleading city difference. The January New York City LST sample and the June London
+sample remain incompatible, but a separately validated New York City cache for 2024-06-25 through
+2024-07-02 now matches the London period and is eligible for a period-level LST comparison. It is
+not an annual or trend comparison.
+
+## NYC and London fixed-season NDVI series
+
+`terratrend/series/nyc-mod13a2-doy177/` contains a bounded authenticated MOD13A2 series: one
+16-day composite beginning on day-of-year 177 for each year from 2010 through 2024. Each file has
+independent product/version, scale, QA, spatial-sampling, and provenance validation; the manifest
+applies a 10% valid-pixel threshold. All 15 periods passed that threshold.
+
+The reusable OLS statistics engine reports a fixed-season slope of `0.000256` NDVI/year (95% CI
+`-0.003669` to `0.004181`, p=`0.890085`, n=15). This is displayed only as a descriptive
+fixed-season MOD13A2 result. It is **not** annual NDVI, a general vegetation-health trend, a
+climate-change attribution, or a causal claim.
+
+`terratrend/series/london-west-tile-mod13a2-doy177/` applies the same 2010–2024 DOY-177
+methodology to a tile-contained central/west London analysis window. The full original London bbox
+crosses a MODIS tile boundary and is intentionally not used for the series. Fourteen periods met
+the 10% valid-pixel threshold; 2021 was retained with provenance but rejected from trend fitting
+(9.72% valid pixels). The London fixed-season slope is `-0.000156` NDVI/year (95% CI
+`-0.003220` to `0.002909`, p=`0.913772`, n=14).
+
+The dashboard's NYC/London fixed-season panel compares these qualified, method-matched estimates
+side by side. It is not a test of the difference between slopes, a city-wide London result, or an
+annual comparison.
+
+## Safe batch ingestion
+
+`terratrend.ingestion` plans MOD11A2 product-aligned eight-day periods before making any network
+request. Its default mode is a dry run: it writes a resumable `manifest.json` to `.terratrend-cache`
+but does not query CMR, use `EARTHDATA_TOKEN`, or download HDF files.
+
+```bash
+# No-network annual plan: 46 expected 2024 periods, all marked planned_no_network.
+python -m terratrend.ingestion --city london --years 2024
+
+# No-network fixed-season plan: this is always period/season-level, never annual.
+python -m terratrend.ingestion --city london --years 2024 \
+  --mode fixed-season --season 06-25:07-02 --cache-dir .terratrend-cache/london-june
+```
+
+Apply mode is deliberately explicit and bounded. It requires `--apply` and refuses before network
+access if pending periods exceed `--max-downloads`; it resumes existing processed outputs, waits
+between requests, atomically retains raw HDF files in the runtime cache, and writes credential-free
+per-period provenance. For a reviewed one-period retrieval:
+
+```bash
+python -m terratrend.ingestion --city london --years 2024 \
+  --mode fixed-season --season 06-25:07-02 --apply --max-downloads 1 \
+  --rate-limit-seconds 2 --cache-dir .terratrend-cache/london-june
+```
+
+Do not invoke an annual apply plan until its planned period count, expected storage, Earthdata
+authorization, and scientific need have been reviewed. A cache can calculate an annual mean only
+with complete contiguous calendar coverage. Fixed-season outputs and incomplete annual coverage
+are explicitly ineligible for annual or multiyear trend claims; `require_multiyear_trend_claim`
+also requires at least three complete annual results.
+
+## Known limitations
+
+- The map uses one representative coordinate per synthetic region, not gridded geospatial data.
+- Two fixture months support UI prototyping only; they do not establish trends.
+- Values are simple anomalies with no uncertainty, quality flags, temporal aggregation, or
+  scientific baseline provenance.
+- The verified sources are two geographically distinct eight-day composites; the global map remains
+  synthetic.
+- A real annual result requires complete, validated coverage for each year and is not shipped.
+- P0 multiyear trend requirements remain incomplete: two isolated periods cannot establish annual
+  values, interannual change, or a trend.
+
+## Next steps
+
+1. Retrieve all annual MOD11A2 composites with retry/rate-limit handling and coverage checks.
+2. Add uncertainty and coverage reporting appropriate to each downstream use.
+3. Expand geographic validation, then build controlled annual coverage for multiple years before
+   calculating trends.

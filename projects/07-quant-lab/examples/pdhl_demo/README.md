@@ -12,7 +12,7 @@ Prior-Day High/Low **failed-break → retest** demo on SPY **underlying points**
 ## Run
 
 ```bash
-cd projects/06-quant-lab
+cd projects/07-quant-lab
 python examples/pdhl_demo/pdhl_backtest.py
 ```
 

@@ -77,7 +77,23 @@ Playwright + TypeScript tests against the IT Service Desk Simulator (and Career 
 - [ ] Visual regression baselines and HTML test report published as a CI artifact
 - [ ] README, test strategy doc, challenges, demo script
 
-## 6. quant-lab — `projects/06-quant-lab`
+## 6. TerraTrend Global — `projects/06-terratrend-global`
+
+Python + Streamlit + Plotly MVP for exploring environmental indicators with authenticated NASA MODIS
+samples. Built ahead of projects 1–5; status on `main` is **Verified MVP** (period-level samples,
+not annual or decision-ready products).
+
+- [x] Scaffold Streamlit app, indicator registry, labeled synthetic fixtures, statistics module, local run + CI tests
+- [x] Authenticated NASA CMR/Earthdata retrieval with credential-free cached outputs and provenance
+- [x] Validated MOD11A2 LST decoder (QC, scale, sinusoidal sampling) for verified city period caches
+- [x] Validated MOD13A2 NDVI period samples (NYC, São Paulo) with QC and spatial gates
+- [x] Six-city LST coverage map with honest verified / alternate-period / unavailable states
+- [x] Safe city comparison + CSV export gates (refuse mismatched product/period/method)
+- [x] Fixed-season NYC and London MOD13A2 DOY-177 series (descriptive slopes only; not annual trends)
+- [x] Methodology, limitations, architecture, demo walkthrough docs; `./test.sh` green
+- [ ] Complete contiguous annual MOD11A2 coverage before any annual-mean or multiyear-trend claims
+
+## 7. quant-lab — `projects/07-quant-lab`
 
 Research-only equity/futures backtesting and ML direction models. No live trading.
 
@@ -88,3 +104,4 @@ Research-only equity/futures backtesting and ML direction models. No live tradin
 - [ ] NQ→stock lead/lag analysis experiment
 - [ ] Walk-forward ML vs naive baseline experiment
 - [x] README results, limitations, reproduce steps; keep NQ vs SPY 0DTE experiments separate (portfolio visual + honest SPENT note; real ff_nq eval still pending)
+

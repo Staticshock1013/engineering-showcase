@@ -4,7 +4,7 @@ Research-only equity and futures backtesting lab for an ML engineering portfolio
 
 **No live trading. No broker order placement.** Secrets stay in `.env` (gitignored). Raw market data stays under `data/` (gitignored); only small fixtures ship with the repo.
 
-Monorepo path: [`projects/06-quant-lab/`](./).
+Monorepo path: [`projects/07-quant-lab/`](./).
 
 ![quant-lab architecture](docs/architecture.jpg)
 
@@ -49,7 +49,7 @@ flowchart LR
 ## Quick start
 
 ```bash
-cd projects/06-quant-lab
+cd projects/07-quant-lab
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
